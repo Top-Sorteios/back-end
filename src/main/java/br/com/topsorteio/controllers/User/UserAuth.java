@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class UserAuth {
-
     @Autowired
     private iUserRepository repository;
 
