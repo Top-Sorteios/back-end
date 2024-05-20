@@ -19,7 +19,7 @@ import java.util.Date;
 @Setter
 @Table(name = "TBUsuario")
 public class UserModel {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UsuarioID", nullable = false)
     private Integer id;
 

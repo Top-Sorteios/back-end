@@ -23,13 +23,12 @@ public class UserController {
     private UserService repository;
 
     @GetMapping
-    @RequestMapping("/usuario")
     public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         List<UserModel> allUser = repository.findAll();
         List<UserResponseDTO> response = new ArrayList<>();
 
         for(UserModel user : allUser){
-            UserResponseDTO responseDTO = new UserResponseDTO(user.getNome(), user.getEmail());
+            UserResponseDTO responseDTO = new UserResponseDTO(user.getNome(), user.getEmail(), user.isAdm(), user.getStatus());
             response.add(responseDTO);
         }
 
