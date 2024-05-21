@@ -6,44 +6,43 @@ import lombok.*;
 import java.util.Date;
 
 
-@Entity(name = "TBUsuario")
-@Getter
-@Setter
-@AllArgsConstructor
+@Entity
+@Data
 @NoArgsConstructor
-@Table(name = "TBUsuario")
+@Table(name = "tbusuario")
 public class UserModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UsuarioID", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "usuarioid", nullable = false)
     private Integer id;
 
-    @Column(name = "Nome", nullable = false, length = 100)
+    @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
-    @Column(name = "Cpf", nullable = false, unique = true, length = 11)
+    @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(name = "Email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "Senha", nullable = true)
+    @Column(name = "senha", nullable = true)
     private String senha;
 
-    @Column(name = "DataNascimento", nullable = false)
+    @Column(name = "datanascimento", nullable = false)
     private Date dataNascimento;
 
-    @Column(name = "Turma", nullable = false, length = 50)
+    @Column(name = "turma", nullable = false, length = 50)
     private String turma;
 
-    @Column(name = "Status", nullable = true, length = 20)
+    @Column(name = "status", nullable = true, length = 20)
     private String status;
 
-    @Column(name = "Administrador", nullable = false)
+    @Column(name = "administrador", nullable = false)
     private boolean adm;
 
-    @Column(name = "CriadoPor", nullable = true)
+    @Column(name = "criadopor", nullable = true)
     private int criadoPor;
 
-    @Column(name = "CriadoEm", nullable = false, columnDefinition = "Timestamp", updatable = true)
+    @Column(name = "criadoem", nullable = false)
     private Date criadoEm = new Date();
 }
