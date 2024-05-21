@@ -1,22 +1,16 @@
 package br.com.topsorteio.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-
-import java.security.Timestamp;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 
 @Entity(name = "TBUsuario")
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "TBUsuario")
 public class UserModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

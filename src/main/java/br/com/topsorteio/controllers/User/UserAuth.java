@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/usuario")
 public class UserAuth {
     @Autowired
     private iUserRepository repository;
@@ -26,6 +26,7 @@ public class UserAuth {
     }
 
     @PostMapping
+    @RequestMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO request){
         Optional<UserModel> userResponse = repository.findByEmail(request.email());
 

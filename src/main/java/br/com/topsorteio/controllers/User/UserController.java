@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/usuario")
 public class UserController {
     @Autowired
     private UserService repository;
@@ -27,9 +27,9 @@ public class UserController {
         List<UserModel> allUser = repository.findAll();
         List<UserResponseDTO> response = new ArrayList<>();
 
+
         for(UserModel user : allUser){
-            UserResponseDTO responseDTO = new UserResponseDTO(user.getNome(), user.getEmail(), user.isAdm(), user.getStatus());
-            response.add(responseDTO);
+            response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.isAdm(), user.getStatus()));
         }
 
         return ResponseEntity.ok(response);
