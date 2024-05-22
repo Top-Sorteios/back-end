@@ -1,8 +1,7 @@
 package br.com.topsorteio.controllers.User;
 
 import br.com.topsorteio.dtos.userdto.UserResponseDTO;
-import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.repositories.iUserRepository;
+import br.com.topsorteio.entities.user.UserModel;
 import br.com.topsorteio.service.userservice.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,9 +26,8 @@ public class UserController {
         List<UserModel> allUser = repository.findAll();
         List<UserResponseDTO> response = new ArrayList<>();
 
-
         for(UserModel user : allUser){
-            response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.isAdm(), user.getStatus()));
+            response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getAdm(), user.getStatus()));
         }
 
         return ResponseEntity.ok(response);

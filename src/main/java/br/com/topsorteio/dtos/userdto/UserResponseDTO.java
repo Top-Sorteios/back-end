@@ -1,4 +1,7 @@
 package br.com.topsorteio.dtos.userdto;
 
-public record UserResponseDTO(String nome, String email, boolean administrador, String status) {
+
+import br.com.topsorteio.entities.user.UserRole;
+
+public record UserResponseDTO(String nome, String email, UserRole administrador, String status) {
 }
