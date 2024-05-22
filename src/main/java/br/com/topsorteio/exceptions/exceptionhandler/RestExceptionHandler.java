@@ -12,13 +12,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EventNotFoundException.class)
     private ResponseEntity<RestErrorMensagem> eventNotFoundHandler(EventNotFoundException exception){
-        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.NOT_FOUND, exception.getMessage(), false);
+        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.NOT_FOUND, 404, exception.getMessage(), false);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
     }
 
     @ExceptionHandler(EventBadRequesException.class)
-    private ResponseEntity<RestErrorMensagem> eventBadRequestHandler(EventNotFoundException exception){
-        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.BAD_REQUEST, exception.getMessage(), false);
+    private ResponseEntity<RestErrorMensagem> eventBadRequestHandler(EventBadRequesException exception){
+        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.BAD_REQUEST, 400, exception.getMessage(), false );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
     }
 

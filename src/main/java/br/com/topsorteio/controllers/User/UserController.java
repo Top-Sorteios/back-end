@@ -22,6 +22,7 @@ public class UserController {
     private UserService repository;
 
     @GetMapping
+    @RequestMapping("/obter")
     public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         List<UserModel> allUser = repository.findAll();
         List<UserResponseDTO> response = new ArrayList<>();

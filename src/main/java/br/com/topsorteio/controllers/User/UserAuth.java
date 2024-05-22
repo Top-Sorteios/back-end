@@ -4,6 +4,7 @@ package br.com.topsorteio.controllers.User;
 import br.com.topsorteio.dtos.userdto.LoginRequestDTO;
 import br.com.topsorteio.dtos.userdto.LoginResponseDTO;
 import br.com.topsorteio.entities.user.UserModel;
+import br.com.topsorteio.exceptions.EventBadRequesException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iUserRepository;
@@ -45,7 +46,7 @@ public class UserAuth {
             return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token, true));
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não Achou");
+        throw new EventNotFoundException("Email ou Senha inválidos.");
     }
 
 }
