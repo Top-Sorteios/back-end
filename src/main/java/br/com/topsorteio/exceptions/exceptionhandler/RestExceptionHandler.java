@@ -1,6 +1,6 @@
 package br.com.topsorteio.exceptions.exceptionhandler;
 
-import br.com.topsorteio.exceptions.EventBadRequesException;
+import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
     }
 
-    @ExceptionHandler(EventBadRequesException.class)
-    private ResponseEntity<RestErrorMensagem> eventBadRequestHandler(EventBadRequesException exception){
+    @ExceptionHandler(EventBadRequestException.class)
+    private ResponseEntity<RestErrorMensagem> eventBadRequestHandler(EventBadRequestException exception){
         RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.BAD_REQUEST, 400, exception.getMessage(), false );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
     }

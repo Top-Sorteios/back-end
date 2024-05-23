@@ -1,4 +1,4 @@
-package br.com.topsorteio.entities.user;
+package br.com.topsorteio.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

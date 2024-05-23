@@ -1,6 +1,6 @@
 package br.com.topsorteio.repositories;
 
-import br.com.topsorteio.entities.user.UserModel;
+import br.com.topsorteio.entities.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,5 @@ import java.util.Optional;
 @Repository
 public interface iUserRepository extends JpaRepository<UserModel, Integer> {
     Optional<UserModel> findByEmail(String email);
-    @Query(value = "SELECT * FROM dbtopsorteio.tbusuario e WHERE e.email = :email", nativeQuery = true)
-    UserDetails findByLogin(String email);
+
 }

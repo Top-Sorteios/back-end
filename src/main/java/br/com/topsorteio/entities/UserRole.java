@@ -1,4 +1,4 @@
-package br.com.topsorteio.entities.user;
+package br.com.topsorteio.entities;
 
 public enum UserRole {
 

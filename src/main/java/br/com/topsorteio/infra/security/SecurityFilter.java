@@ -1,17 +1,15 @@
 package br.com.topsorteio.infra.security;
 
-import br.com.topsorteio.entities.user.UserModel;
-import br.com.topsorteio.exceptions.EventBadRequesException;
+import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
-import br.com.topsorteio.service.userservice.UserService;
+import br.com.topsorteio.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -37,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(token != null){
             var login = tokenService.validateToken(token);
             if(login == null ){
-                throw new EventBadRequesException("Falha na Requisição");
+                throw new EventBadRequestException("Falha na Requisição");
             }
 
             UserModel user = userRepository.findByEmail(login).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));

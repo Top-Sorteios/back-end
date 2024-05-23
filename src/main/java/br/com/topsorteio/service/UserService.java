@@ -1,14 +1,11 @@
-package br.com.topsorteio.service.userservice;
+package br.com.topsorteio.service;
 
-import br.com.topsorteio.entities.user.UserModel;
-import br.com.topsorteio.exceptions.EventNotFoundException;
+import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +21,5 @@ public class UserService {
         return repository.findByEmail(email);
     }
     public Optional<UserModel> findById(Integer id){return repository.findById(id);}
-
-    public UserDetails findByLogin(String email) {return repository.findByLogin(email);}
-
+    public UserModel createUser(UserModel user) {return repository.save(user);}
 }
