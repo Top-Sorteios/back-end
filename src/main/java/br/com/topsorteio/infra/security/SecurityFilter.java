@@ -2,6 +2,7 @@ package br.com.topsorteio.infra.security;
 
 import br.com.topsorteio.entities.user.UserModel;
 import br.com.topsorteio.exceptions.EventBadRequesException;
+import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.service.userservice.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,12 +36,11 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if(token != null){
             var login = tokenService.validateToken(token);
-            if(login.isEmpty() ){
+            if(login == null ){
                 throw new EventBadRequesException("Falha na Requisição");
             }
 
-
-            UserModel user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
+            UserModel user = userRepository.findByEmail(login).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

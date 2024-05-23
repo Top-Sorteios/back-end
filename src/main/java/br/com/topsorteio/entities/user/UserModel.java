@@ -63,13 +63,13 @@ public class UserModel implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return this.senha;
     }
 
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override

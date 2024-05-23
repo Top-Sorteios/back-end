@@ -42,9 +42,8 @@ public class UserAuth {
 
         String token = this.tokenService.generateToken(userResponse);
 
-        if(userResponse.getEmail().equals(request.email()) && userResponse.getSenha().equals(request.senha())){
+        if(userResponse.getEmail().equals(request.email()) && userResponse.getSenha().equals(request.senha()))
             return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token, true));
-        }
 
         throw new EventNotFoundException("Email ou Senha inválidos.");
     }

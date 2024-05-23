@@ -25,6 +25,6 @@ public class UserService {
     }
     public Optional<UserModel> findById(Integer id){return repository.findById(id);}
 
-
+    public UserDetails findByLogin(String email) {return repository.findByLogin(email);}
 
 }
