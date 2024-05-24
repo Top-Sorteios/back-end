@@ -1,13 +1,9 @@
 package br.com.topsorteio.controllers;
 
-import br.com.topsorteio.dtos.LoginRequestDTO;
-import br.com.topsorteio.dtos.LoginResponseDTO;
-import br.com.topsorteio.dtos.UserRegisterRequestDTO;
-import br.com.topsorteio.dtos.UserResponseDTO;
+import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.service.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/usuarios")
 public class UserController {
     @Autowired
     private UserService repository;
@@ -90,5 +86,20 @@ public class UserController {
         }
 
         return ResponseEntity.ok(pegarPeloId);
+    }
+
+    @PutMapping
+    @RequestMapping("/editar/{email}")
+    public ResponseEntity editarUsuario(@PathVariable String email, @RequestBody UserEditRequestDTO request){
+
+        Optional<UserModel> userResponse = this.repository.findByEmail(email);
+
+        if(userResponse.isEmpty())return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+
+        UserModel atributosUsuario = userResponse.get();
+        String senha = passwordEncoder.encode(request.senha());
+        atributosUsuario.setSenha(senha);
+        BeanUtils.copyProperties(request, userResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(repository.update(userResponse.get()));
     }
 }

@@ -22,16 +22,24 @@ public class UserService {
     public Optional<UserModel> findByEmail(String email){
         try{
             return repository.findByEmail(email);
-        }catch(JpaSystemException ex){
+        }catch(RuntimeException ex){
             throw new EventTimeOutException();
         }
     }
     public Optional<UserModel> findById(Integer id){
         try{
             return repository.findById(id);
-        }catch(JpaSystemException ex){
+        }catch(RuntimeException ex){
             throw new EventTimeOutException();
         }
     }
     public UserModel createUser(UserModel user) {return repository.save(user);}
+
+    public UserModel update(UserModel user){
+        try{
+            return repository.save(user);
+        }catch (RuntimeException ex){
+            throw new EventTimeOutException();
+        }
+    }
 }
