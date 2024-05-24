@@ -1,8 +1,10 @@
 package br.com.topsorteio.service;
 
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventTimeOutException;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,18 @@ public class UserService {
         return repository.findAll();
     }
     public Optional<UserModel> findByEmail(String email){
-        return repository.findByEmail(email);
+        try{
+            return repository.findByEmail(email);
+        }catch(JpaSystemException ex){
+            throw new EventTimeOutException();
+        }
     }
-    public Optional<UserModel> findById(Integer id){return repository.findById(id);}
+    public Optional<UserModel> findById(Integer id){
+        try{
+            return repository.findById(id);
+        }catch(JpaSystemException ex){
+            throw new EventTimeOutException();
+        }
+    }
     public UserModel createUser(UserModel user) {return repository.save(user);}
 }

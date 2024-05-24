@@ -5,10 +5,9 @@ import br.com.topsorteio.dtos.LoginResponseDTO;
 import br.com.topsorteio.dtos.UserRegisterRequestDTO;
 import br.com.topsorteio.dtos.UserResponseDTO;
 import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.exceptions.EventBadRequestException;
-import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ public class UserController {
         Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
         UserModel user = new UserModel();
 
-        if(userResponse.isPresent()) throw new EventBadRequestException("Usuário já existe.");
+        if(userResponse.isPresent()) ResponseEntity.status(HttpStatus.OK).body("Usuário já existe.");
 
         String password = passwordEncoder.encode(request.senha());
 
@@ -65,7 +64,7 @@ public class UserController {
         if(user.getEmail().equals(request.email()) && user.getSenha().equals(request.senha()))
             return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token, true));
 
-        throw new EventNotFoundException("Email ou Senha inválidos.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
     }
 
     @GetMapping

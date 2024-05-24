@@ -1,8 +1,6 @@
 package br.com.topsorteio.infra.security;
 
 import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.exceptions.EventBadRequestException;
-import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
