@@ -35,7 +35,7 @@ public class UserController {
         Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
         UserModel user = new UserModel();
 
-        if(userResponse.isPresent()) ResponseEntity.status(HttpStatus.OK).body("Usuário já existe.");
+        if(userResponse.isPresent()) return ResponseEntity.status(HttpStatus.OK).body("Usuário já existe.");
 
         String password = passwordEncoder.encode(request.senha());
 

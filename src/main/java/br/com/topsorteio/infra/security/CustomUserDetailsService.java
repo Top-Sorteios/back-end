@@ -1,6 +1,7 @@
 package br.com.topsorteio.infra.security;
 
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
