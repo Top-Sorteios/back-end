@@ -1,12 +1,15 @@
 package br.com.topsorteio.infra.security;
 
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -32,7 +35,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(token != null){
             var login = tokenService.validateToken(token);
             if(login == null ){
-                throw new EventBadRequestException("Falha na Requisição");
+                ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE);
             }
 
             UserModel user = userRepository.findByEmail(login).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));
