@@ -29,19 +29,15 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
+        var login = tokenService.validateToken(token);
 
 
-
-        if(token != null){
-            var login = tokenService.validateToken(token);
-            if(login == null ){
-                ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE);
-            }
-
+        if(token != null && login != null){
             UserModel user = userRepository.findByEmail(login).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         filterChain.doFilter(request, response);
     }
 
