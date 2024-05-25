@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +19,8 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService repository;
-
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -33,47 +30,39 @@ public class UserController {
     @RequestMapping("/registrar")
     public ResponseEntity registrarUsuario(@RequestBody UserRegisterRequestDTO request){
         Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
-        UserModel user = new UserModel();
 
-        if(userResponse.isPresent()) return ResponseEntity.status(HttpStatus.OK).body("Usuário já existe.");
+        if(userResponse.isPresent())
+            return ResponseEntity.status(HttpStatus.OK).body(new RegisterErrorDTO(HttpStatus.BAD_REQUEST, 400, "Usuário já existe."));
 
         String password = passwordEncoder.encode(request.senha());
 
-        BeanUtils.copyProperties(request, user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(repository.createUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.createUser(new UserModel(request, password)));
     }
 
     @PostMapping
     @RequestMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO request){
-        Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
+        Optional<UserModel> userOptional = repository.findByEmail(request.email());
 
-        if(userResponse.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-        }
+        if(userOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        var user = userResponse.get();
+        UserModel userData = userOptional.get();
+        String token = tokenService.generateToken(userData);
 
-        String token = this.tokenService.generateToken(user);
-
-        if(user.getEmail().equals(request.email()) && user.getSenha().equals(request.senha()))
+        if(userData.getEmail().equals(request.email()) && passwordEncoder.matches(request.senha(), userData.getPassword()))
             return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token, true));
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @GetMapping
     @RequestMapping("/obter")
-    public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
-        List<UserModel> allUser = repository.findAll();
-        List<UserResponseDTO> response = new ArrayList<>();
+    public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
 
-        for(UserModel user : allUser){
-            response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getAdm(), user.getStatus()));
-        }
+        List<GetAllUserResponseDTO> todosOsUsuarios = repository.pegarTodosOsUsuarios();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(todosOsUsuarios);
     }
 
     @GetMapping
@@ -90,16 +79,18 @@ public class UserController {
 
     @PutMapping
     @RequestMapping("/editar/{email}")
-    public ResponseEntity editarUsuario(@PathVariable String email, @RequestBody UserEditRequestDTO request){
-
+    public ResponseEntity editarSenha(@PathVariable String email, @RequestBody UserEditRequestDTO request){
         Optional<UserModel> userResponse = this.repository.findByEmail(email);
 
-        if(userResponse.isEmpty())return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+        if(userResponse.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        UserModel atributosUsuario = userResponse.get();
         String senha = passwordEncoder.encode(request.senha());
-        atributosUsuario.setSenha(senha);
+
+        userResponse.get().setSenha(senha);
         BeanUtils.copyProperties(request, userResponse);
-        return ResponseEntity.status(HttpStatus.OK).body(repository.update(userResponse.get()));
+
+        repository.updateUser(userResponse.get());
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

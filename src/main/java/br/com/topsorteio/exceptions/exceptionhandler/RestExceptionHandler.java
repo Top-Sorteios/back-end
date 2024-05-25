@@ -1,7 +1,7 @@
 package br.com.topsorteio.exceptions.exceptionhandler;
 
+import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
-import br.com.topsorteio.exceptions.EventServiceUnavailableException;
 import br.com.topsorteio.exceptions.EventTimeOutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(threatResponse);
     }
 
-    @ExceptionHandler(EventServiceUnavailableException.class)
-    private ResponseEntity<RestErrorMensagem> eventServiceUnavailableHandler(EventServiceUnavailableException exception){
-        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.SERVICE_UNAVAILABLE, 503, exception.getMessage(), false );
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(threatResponse);
+    @ExceptionHandler(EventInternalServerErrorException.class)
+    private ResponseEntity<RestErrorMensagem> eventServiceUnavailableHandler(EventInternalServerErrorException exception){
+        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.INTERNAL_SERVER_ERROR, 503, exception.getMessage(), false );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(threatResponse);
     }
 
     @ExceptionHandler(EventNotFoundException.class)

@@ -1,5 +1,6 @@
 package br.com.topsorteio.entities;
 
+import br.com.topsorteio.dtos.UserRegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,6 +55,18 @@ public class UserModel implements UserDetails {
         return this.email;
     }
 
+
+    public UserModel(UserRegisterRequestDTO data, String senha) {
+        this.nome = data.nome();
+        this.cpf = data.cpf();
+        this.email = data.email();;
+        this.senha = senha;
+        this.dataNascimento = data.datanascimento();
+        this.turma = data.turma();
+        this.status = data.status();
+        this.adm = data.administrador();
+        this.criadoPor = data.criadopor();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
