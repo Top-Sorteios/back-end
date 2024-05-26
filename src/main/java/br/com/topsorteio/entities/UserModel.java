@@ -33,8 +33,8 @@ public class UserModel implements UserDetails {
     @Column(name = "senha", nullable = true)
     private String senha;
 
-    @Column(name = "datanascimento", nullable = false)
-    private Date dataNascimento;
+    @Column(name = "datanascimento", nullable = false, columnDefinition = "date")
+    private String dataNascimento;
 
     @Column(name = "turma", nullable = false, length = 50)
     private String turma;
@@ -56,11 +56,10 @@ public class UserModel implements UserDetails {
     }
 
 
-    public UserModel(UserRegisterRequestDTO data, String senha) {
+    public UserModel(UserRegisterRequestDTO data) {
         this.nome = data.nome();
         this.cpf = data.cpf();
         this.email = data.email();;
-        this.senha = senha;
         this.dataNascimento = data.datanascimento();
         this.turma = data.turma();
         this.status = data.status();

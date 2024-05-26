@@ -1,10 +1,15 @@
 package br.com.topsorteio.service;
 
+import br.com.topsorteio.dtos.FirstAcessRequestDTO;
 import br.com.topsorteio.dtos.GetAllUserResponseDTO;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.repositories.iUserRepository;
+import org.apache.catalina.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,10 +24,11 @@ public class UserService {
     private iUserRepository repository;
 
 
+
     public List<UserModel> findAll(){
         try{
             return repository.findAll();
-        }catch (RuntimeException ex){
+        }catch (JpaSystemException ex){
             throw new EventInternalServerErrorException();
         }
     }
@@ -30,7 +36,7 @@ public class UserService {
     public Optional<UserModel> findByEmail(String email){
         try{
             return repository.findByEmail(email);
-        }catch(RuntimeException ex){
+        }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException();
         }
     }
@@ -38,18 +44,18 @@ public class UserService {
     public Optional<UserModel> findById(Integer id){
         try{
             return repository.findById(id);
-        }catch(RuntimeException ex){
+        }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException();
         }
     }
 
     public UserModel createUser(UserModel user) {return repository.save(user);}
 
-    public UserModel updateUser(UserModel user){
+    public UserModel atualizarUsuario(UserModel user){
         try{
             return repository.save(user);
-        }catch (RuntimeException ex){
-            throw new EventInternalServerErrorException();
+        }catch (JpaSystemException ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
 
@@ -67,6 +73,37 @@ public class UserService {
         }catch(RuntimeException ex){
             throw new EventInternalServerErrorException();
         }
+    }
+
+    public UserModel primeiroAcesso(FirstAcessRequestDTO data, String senhaCriptografada){
+        try{
+            Optional<UserModel> usuario = this.repository.findByEmail(data.email());
+
+            System.out.println(usuario);
+
+            if(usuario.isEmpty()) return null;
+
+            UserModel usuarioModel = usuario.get();
+
+            if(usuarioModel.getEmail().equals(data.email())
+                    && usuarioModel.getCpf().equals(data.cpf())
+                    && usuarioModel.getDataNascimento().equals(data.datanascimento())
+                    && (usuarioModel.getSenha() == null)){
+
+                usuarioModel.setSenha(senhaCriptografada);
+                BeanUtils.copyProperties(data, usuario.get());
+
+                usuarioModel.setSenha(senhaCriptografada);
+                this.repository.save(usuario.get());
+
+                return usuarioModel;
+            }
+
+            return null;
+        }catch (RuntimeException ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+
     }
 
 
