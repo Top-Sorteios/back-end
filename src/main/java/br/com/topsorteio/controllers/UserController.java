@@ -25,18 +25,18 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
 
-
     @PostMapping
     @RequestMapping("/registrar")
     public ResponseEntity registrarUsuario(@RequestBody UserRegisterRequestDTO request){
         Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
 
         if(userResponse.isPresent())
-            return ResponseEntity.status(HttpStatus.OK).body(new RegisterErrorDTO(HttpStatus.BAD_REQUEST, 400, "Usuário já existe."));
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Usuário já existe.", false));
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.createUser(new UserModel(request)));
     }
+
 
     @PostMapping
     @RequestMapping("/login")
@@ -44,8 +44,10 @@ public class UserController {
         Optional<UserModel> userOptional = repository.findByEmail(request.email());
 
         if(userOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
         UserModel userData = userOptional.get();
+        if(userData.getSenha() == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false));
+
         String token = tokenService.generateToken(userData);
 
         if(userData.getEmail().equals(request.email()) && passwordEncoder.matches(request.senha(), userData.getPassword()))
@@ -94,7 +96,7 @@ public class UserController {
     }
 
     @PutMapping
-    @RequestMapping("/editar/primeiro-acesso")
+    @RequestMapping("/primeiro-acesso")
     public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
         String senhaCriptografada = passwordEncoder.encode(data.senha());
         UserModel usuarioPrimeiroAcesso = repository.primeiroAcesso(data, senhaCriptografada);
@@ -106,6 +108,6 @@ public class UserController {
                     .body(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new RegisterErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito."));
+                .body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false));
     }
 }

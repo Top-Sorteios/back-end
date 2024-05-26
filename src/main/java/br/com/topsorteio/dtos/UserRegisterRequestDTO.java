@@ -6,4 +6,4 @@ import java.util.Date;
 
 public record UserRegisterRequestDTO(String nome, String cpf, String email,
                                      String datanascimento, String turma, String status,
-                                     UserRole administrador, Integer criadopor) {}
+                                     UserRole administrador, int criadopor) {}

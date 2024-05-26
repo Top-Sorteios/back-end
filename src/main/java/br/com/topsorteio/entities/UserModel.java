@@ -51,10 +51,6 @@ public class UserModel implements UserDetails {
     @Column(name = "criadoem", nullable = false)
     private Date criadoEm = new Date();
 
-    public String getEmailDetails(){
-        return this.email;
-    }
-
 
     public UserModel(UserRegisterRequestDTO data) {
         this.nome = data.nome();

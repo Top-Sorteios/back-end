@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,8 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/obter/{email}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/editar/primeiro-acesso").permitAll()
-
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/primeiro-acesso").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
