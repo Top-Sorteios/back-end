@@ -96,21 +96,53 @@ public class UserService {
         }
     }
 
-    public UserModel createUser(UserModel user) {return repository.save(user);}
+    public ResponseEntity registrarUsuario(UserRegisterRequestDTO data) {
+        Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
 
-    public ResponseEntity editarSenha(FirstAcessRequestDTO data){
-        String senhaCriptografada = passwordEncoder.encode(data.senha());
-        UserModel usuarioPrimeiroAcesso = primeiroAcesso(data, senhaCriptografada);
-
-
-        if(usuarioPrimeiroAcesso != null)
-            return new ResponseEntity<>(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
+        if(userResponse.isPresent())
+            return new ResponseEntity<>(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false), HttpStatus.CONFLICT);
 
 
-        return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new UserModel(data)));
     }
 
-    private UserModel primeiroAcesso(FirstAcessRequestDTO data, String senhaCriptografada){
+    public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
+        try{
+            Optional<UserModel> userResponse = this.repository.findByEmail(email);
+
+            if(userResponse.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            String senha = passwordEncoder.encode(data.senha());
+
+            userResponse.get().setSenha(senha);
+            BeanUtils.copyProperties(data, userResponse);
+
+            repository.save(userResponse.get());
+
+            return new ResponseEntity<>(HttpStatus.OK);
+
+        }catch (RuntimeException ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+
+
+    }
+
+    public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
+        try{
+            UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
+
+            if(usuarioPrimeiroAcesso != null)
+                return new ResponseEntity<>(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
+
+            return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
+
+        }catch (RuntimeException ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+
+    }
+    public UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
         try{
             Optional<UserModel> usuario = this.repository.findByEmail(data.email());
 
@@ -123,10 +155,9 @@ public class UserService {
                     && usuarioModel.getDataNascimento().equals(data.datanascimento())
                     && (usuarioModel.getSenha() == null)){
 
-                usuarioModel.setSenha(senhaCriptografada);
                 BeanUtils.copyProperties(data, usuario.get());
+                usuarioModel.setSenha(passwordEncoder.encode(data.senha()));
 
-                usuarioModel.setSenha(senhaCriptografada);
                 this.repository.save(usuario.get());
 
                 return usuarioModel;
