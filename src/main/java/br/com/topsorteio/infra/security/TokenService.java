@@ -20,6 +20,8 @@ public class TokenService {
 
     @Value("${spring.application.name}")
     private String nameProject;
+
+
     public String generateToken(UserModel user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);

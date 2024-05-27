@@ -1,11 +1,8 @@
 package br.com.topsorteio.entities;
 
 public enum UserRole {
-
-
     USER(0),
     ADMIN(1);
-
     private int role;
 
     UserRole(int role){

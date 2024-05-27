@@ -19,11 +19,6 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService repository;
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
 
     @PostMapping
     @RequestMapping("/registrar")
@@ -31,7 +26,8 @@ public class UserController {
         Optional<UserModel> userResponse = this.repository.findByEmail(request.email());
 
         if(userResponse.isPresent())
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Usuário já existe.", false));
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false));
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.createUser(new UserModel(request)));
@@ -41,73 +37,40 @@ public class UserController {
     @PostMapping
     @RequestMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO request){
-        Optional<UserModel> userOptional = repository.findByEmail(request.email());
-
-        if(userOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        UserModel userData = userOptional.get();
-        if(userData.getSenha() == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false));
-
-        String token = tokenService.generateToken(userData);
-
-        if(userData.getEmail().equals(request.email()) && passwordEncoder.matches(request.senha(), userData.getPassword()))
-            return ResponseEntity.status(HttpStatus.OK).body(new TokenResponseDTO(token, true));
-
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return repository.login(request);
     }
 
     @GetMapping
     @RequestMapping("/obter")
     public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
-
-        List<GetAllUserResponseDTO> todosOsUsuarios = repository.pegarTodosOsUsuarios();
-
-        return ResponseEntity.ok(todosOsUsuarios);
+        return repository.pegarTodosOsUsuarios();
     }
 
     @GetMapping
     @RequestMapping("/obter/{id}")
-    public ResponseEntity pegarPeloId(@PathVariable Integer id){
-        Optional<UserModel> pegarPeloId = repository.findById(id);
-
-        if(pegarPeloId.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-        }
-
-        return ResponseEntity.ok(pegarPeloId);
+    public ResponseEntity acharPeloId(@PathVariable Integer id){
+        return repository.acharPeloID(id);
     }
 
     @PutMapping
     @RequestMapping("/editar/{email}")
     public ResponseEntity editarSenha(@PathVariable String email, @RequestBody UserEditRequestDTO request){
-        Optional<UserModel> userResponse = this.repository.findByEmail(email);
-
-        if(userResponse.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
-        String senha = passwordEncoder.encode(request.senha());
-
-        userResponse.get().setSenha(senha);
-        BeanUtils.copyProperties(request, userResponse);
-
-        repository.atualizarUsuario(userResponse.get());
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return repository.editarSenha(email, request);
     }
 
-    @PutMapping
-    @RequestMapping("/primeiro-acesso")
-    public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
-        String senhaCriptografada = passwordEncoder.encode(data.senha());
-        UserModel usuarioPrimeiroAcesso = repository.primeiroAcesso(data, senhaCriptografada);
-
-        System.out.print(usuarioPrimeiroAcesso);
-
-        if(usuarioPrimeiroAcesso != null)
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true));
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false));
-    }
+//    @PutMapping
+//    @RequestMapping("/primeiro-acesso")
+//    public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
+//        String senhaCriptografada = passwordEncoder.encode(data.senha());
+//        UserModel usuarioPrimeiroAcesso = repository.primeiroAcesso(data, senhaCriptografada);
+//
+//        System.out.print(usuarioPrimeiroAcesso);
+//
+//        if(usuarioPrimeiroAcesso != null)
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true));
+//
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                .body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false));
+//    }
 }
