@@ -4,6 +4,7 @@ import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,5 +56,11 @@ public class UserController {
     @RequestMapping("/primeiro-acesso")
     public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
        return repository.primeiroAcesso(data);
+    }
+
+    @GetMapping
+    @RequestMapping("/helloworld")
+    public ResponseEntity HelloWorld(){
+        return ResponseEntity.ok("Hello World");
     }
 }
