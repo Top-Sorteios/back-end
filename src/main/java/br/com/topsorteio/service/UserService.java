@@ -107,7 +107,7 @@ public class UserService {
             if(!(passwordEncoder.matches(data.senhaAtual(), userResponse.get().getSenha()) && email.equals(userResponse.get().getEmail())))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            userResponse.get().setSenha(passwordEncoder.encode(data.senhaAtual()));
+            userResponse.get().setSenha(passwordEncoder.encode(data.senha()));
             BeanUtils.copyProperties(data, userResponse);
 
             repository.save(userResponse.get());
