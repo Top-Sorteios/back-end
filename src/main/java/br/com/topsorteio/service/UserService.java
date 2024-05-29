@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,6 @@ public class UserService {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
-
     public ResponseEntity<HttpStatus> editarSenha(String email, UserEditRequestDTO request){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
@@ -75,14 +75,7 @@ public class UserService {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
-
-    public Optional<UserModel> findByEmail(String email){
-        try{
-            return repository.findByEmail(email);
-        }catch(JpaSystemException ex){
-            throw new EventInternalServerErrorException();
-        }
-    }
+    public Optional<UserModel> findByEmail(String email){return repository.findByEmail(email);}
 
     public ResponseEntity<Optional<UserModel>> acharPeloID(Integer id){
         try{
@@ -95,7 +88,6 @@ public class UserService {
             throw new EventInternalServerErrorException();
         }
     }
-
     public ResponseEntity registrarUsuario(UserRegisterRequestDTO data) {
         Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
 
@@ -109,12 +101,13 @@ public class UserService {
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
-
             if(userResponse.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-            String senha = passwordEncoder.encode(data.senha());
 
-            userResponse.get().setSenha(senha);
+            if(!(passwordEncoder.matches(data.senhaAtual(), userResponse.get().getSenha()) && email.equals(userResponse.get().getEmail())))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            userResponse.get().setSenha(passwordEncoder.encode(data.senhaAtual()));
             BeanUtils.copyProperties(data, userResponse);
 
             repository.save(userResponse.get());
@@ -127,7 +120,6 @@ public class UserService {
 
 
     }
-
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
@@ -169,15 +161,6 @@ public class UserService {
         }
 
     }
-
-    public UserModel atualizarUsuario(UserModel user){
-        try{
-            return repository.save(user);
-        }catch (JpaSystemException ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
-        }
-    }
-
     public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
         try{
             List<UserModel> allUser = repository.findAll();

@@ -1,19 +1,14 @@
 package br.com.topsorteio.controllers;
 
 import br.com.topsorteio.dtos.*;
-import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.service.UserService;
-import org.apache.coyote.Response;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/usuarios")
@@ -47,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping
-    @RequestMapping("/editar/{email}")
+    @RequestMapping("/editar/senha/{email}")
     public ResponseEntity editarSenha(@PathVariable String email, @RequestBody UserEditRequestDTO request){
         return repository.editarSenha(request, email);
     }
@@ -63,4 +58,6 @@ public class UserController {
     public ResponseEntity HelloWorld(){
         return ResponseEntity.ok("Hello World");
     }
+
+
 }
