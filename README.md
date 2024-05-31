@@ -41,7 +41,7 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/login
 ```console
 {
 	"email": string, 
-	"cpf": string,  
+	"senha": string,  
 }
 ```
 
