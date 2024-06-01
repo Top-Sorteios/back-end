@@ -16,6 +16,6 @@ public interface IPremioRepository extends JpaRepository<PremioModel, Integer> {
 	
 	Optional<PremioModel> findByCodigoSku(String codigoSku); 
 
-    List<PremioModel> findByNomeContainingIgnoreCase(String nome);
+    	List<PremioModel> findByNomeContainingIgnoreCase(String nome);
 
 }
