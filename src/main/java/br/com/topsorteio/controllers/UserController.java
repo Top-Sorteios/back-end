@@ -1,7 +1,9 @@
 package br.com.topsorteio.controllers;
 
 import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 public class UserController {
+
+
     @Autowired
     private UserService repository;
 
@@ -53,11 +57,19 @@ public class UserController {
        return repository.primeiroAcesso(data);
     }
 
+    @PostMapping
+    @RequestMapping("/esqueci-senha")
+    public ResponseEntity esqueciSenha(@RequestBody EsqueciSenhaRequestDTO request){
+        return repository.esqueciSenha(request);
+    }
+
     @GetMapping
     @RequestMapping("/helloworld")
     public ResponseEntity HelloWorld(){
         return ResponseEntity.ok("Hello World");
     }
+
+
 
 
 }

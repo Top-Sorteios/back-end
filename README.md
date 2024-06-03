@@ -54,4 +54,12 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/senha/{email}
 }
 ```
 
+https://grupo-top-sorteios.azurewebsites.net/usuarios/esqueci-senha
+
+```console
+{
+	"email": string 
+}
+```
+
 

@@ -3,10 +3,12 @@ package br.com.topsorteio.service;
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
+import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
@@ -16,10 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -29,6 +28,9 @@ public class UserService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EmailService emailService;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -120,6 +122,8 @@ public class UserService {
 
 
     }
+
+//    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
@@ -134,7 +138,7 @@ public class UserService {
         }
 
     }
-    public UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
+    private UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
         try{
             Optional<UserModel> usuario = this.repository.findByEmail(data.email());
 
@@ -161,6 +165,7 @@ public class UserService {
         }
 
     }
+//    ---------------
     public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
         try{
             List<UserModel> allUser = repository.findAll();
@@ -177,6 +182,30 @@ public class UserService {
         }catch(RuntimeException ex){
             throw new EventInternalServerErrorException();
         }
+    }
+
+    public ResponseEntity esqueciSenha(EsqueciSenhaRequestDTO data){
+        try{
+            Optional<UserModel> usuario = repository.findByEmail(data.email());
+
+            if(usuario.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            UUID geradorDeSenha = UUID.randomUUID();
+            String[] senha = geradorDeSenha.toString().split("-");
+
+            emailService.sendEmail(new EmailSenderDTO(data.email(), "Seila", "Sua senha foi alterada: " + senha[0]));
+            String senhaEncriptografada = passwordEncoder.encode(senha[0]);
+
+            usuario.get().setSenha(senhaEncriptografada);
+
+            repository.save(usuario.get());
+
+            return new ResponseEntity<>(new EsqueciSenhaResponseDTO(true), HttpStatus.OK);
+
+        }catch(Exception ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+
     }
 
 
