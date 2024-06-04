@@ -31,10 +31,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/usuarios/login", "/usuarios/registrar","/usuarios/esqueci-senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/login","/usuarios/esqueci-senha", "/usuarios/registrar").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuarios/helloworld").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/obter/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/obter/{email}").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/editar/senha/{email}").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/primeiro-acesso").permitAll()
                         .anyRequest().authenticated()

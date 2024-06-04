@@ -13,7 +13,6 @@ import java.util.List;
 
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/usuarios")
 public class UserController {
 
@@ -41,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping
-    @RequestMapping("/obter/{id}")
-    public ResponseEntity acharPeloId(@PathVariable Integer id){
-        return repository.acharPeloID(id);
+    @RequestMapping("/obter/{email}")
+    public ResponseEntity acharPeloId(@PathVariable String email){
+        return repository.acharPeloEmail(email);
     }
 
     @PutMapping

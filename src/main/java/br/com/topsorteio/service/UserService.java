@@ -47,11 +47,8 @@ public class UserService {
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false), HttpStatus.BAD_REQUEST);
 
 
-            String token = tokenService.generateToken(userData);
-
-
             if(userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
-                return new ResponseEntity<>(new TokenResponseDTO(token, true), HttpStatus.OK);
+                return new ResponseEntity<>(new TokenResponseDTO(userData.getEmail(), tokenService.generateToken(userData), true), HttpStatus.OK);
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
@@ -79,10 +76,10 @@ public class UserService {
     }
     public Optional<UserModel> findByEmail(String email){return repository.findByEmail(email);}
 
-    public ResponseEntity<Optional<UserModel>> acharPeloID(Integer id){
+    public ResponseEntity<Optional<UserModel>> acharPeloEmail(String email){
         try{
 
-            Optional<UserModel> pegarPeloId = repository.findById(id);
+            Optional<UserModel> pegarPeloId = repository.findByEmail(email);
             if(pegarPeloId.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(pegarPeloId, HttpStatus.OK);
 
@@ -91,13 +88,18 @@ public class UserService {
         }
     }
     public ResponseEntity registrarUsuario(UserRegisterRequestDTO data) {
-        Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
+        try{
+            Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
 
-        if(userResponse.isPresent())
-            return new ResponseEntity<>(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false), HttpStatus.CONFLICT);
+            if(userResponse.isPresent())
+                return new ResponseEntity<>(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false), HttpStatus.CONFLICT);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new UserModel(data)));
+        }catch(Exception ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
 
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new UserModel(data)));
     }
 
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
@@ -126,10 +128,14 @@ public class UserService {
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
+            Optional<UserModel> usuario = repository.findByEmail(data.email());
+
+            if(usuario.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
 
             if(usuarioPrimeiroAcesso != null)
-                return new ResponseEntity<>(new TokenResponseDTO(tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
+                return new ResponseEntity<>(new TokenResponseDTO(data.email(), tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
 
             return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
 
