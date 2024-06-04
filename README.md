@@ -5,7 +5,7 @@
 | POST| https://grupo-top-sorteios.azurewebsites.net/usuarios/login | X |
 | POST| https://grupo-top-sorteios.azurewebsites.net/usuarios/esqueci-senha | X |
 | GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/obter | ADMIN |
-| GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/obter/{id} | USER |
+| GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/obter/{email} | USER |
 | PUT | https://grupo-top-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
 | GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/helloworld | X |
 
