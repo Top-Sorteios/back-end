@@ -1,9 +1,7 @@
 package br.com.topsorteio.controllers;
 
 import br.com.topsorteio.dtos.*;
-import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.service.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -35,13 +33,13 @@ public class UserController {
 
     @GetMapping
     @RequestMapping("/obter")
-    public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
+    public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         return repository.pegarTodosOsUsuarios();
     }
 
     @GetMapping
     @RequestMapping("/obter/{email}")
-    public ResponseEntity acharPeloId(@PathVariable String email){
+    public ResponseEntity acharPeloEmail(@PathVariable String email){
         return repository.acharPeloEmail(email);
     }
 

@@ -8,15 +8,11 @@ import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -76,12 +72,14 @@ public class UserService {
     }
     public Optional<UserModel> findByEmail(String email){return repository.findByEmail(email);}
 
-    public ResponseEntity<Optional<UserModel>> acharPeloEmail(String email){
+    public ResponseEntity<UserResponseDTO> acharPeloEmail(String email){
         try{
 
-            Optional<UserModel> pegarPeloId = repository.findByEmail(email);
-            if(pegarPeloId.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(pegarPeloId, HttpStatus.OK);
+            Optional<UserModel> pegarPeloEmail = repository.findByEmail(email);
+            if(pegarPeloEmail.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            UserModel usuario = pegarPeloEmail.get();
+            return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getAdm(), usuario.getStatus(), usuario.getDataNascimento(), usuario.getTurma()), HttpStatus.OK);
 
         }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException();
@@ -172,16 +170,16 @@ public class UserService {
 
     }
 //    ---------------
-    public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
+    public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         try{
             List<UserModel> allUser = repository.findAll();
-            List<GetAllUserResponseDTO> response = new ArrayList<>();
+            List<UserResponseDTO> response = new ArrayList<>();
 
             if(allUser.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 
             for(UserModel user : allUser)
-                response.add(new GetAllUserResponseDTO(user.getNome(), user.getEmail(), user.getAdm(), user.getStatus(), user.getDataNascimento(), user.getTurma()));
+                response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.getAdm(), user.getStatus(), user.getDataNascimento(), user.getTurma()));
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 
