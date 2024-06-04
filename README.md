@@ -23,7 +23,7 @@
    	 "turma": "string",
    	 "status": "string",
    	 "administrador": "string", //USER ou ADMIN
-	"criadopor": 2, //aqui é passado o id de um admin, pode ultilizar o 2 que é um id de admmin
+	"criadopor": 2, //aqui é passado o id de um admin, pode ultilizar o 2 que é um id de admin
 ```
 
 https://grupo-top-sorteios.azurewebsites.net/usuarios/primeiro-acesso
