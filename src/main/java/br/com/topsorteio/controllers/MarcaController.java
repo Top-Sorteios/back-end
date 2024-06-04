@@ -28,5 +28,4 @@ public class MarcaController {
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Marca já existe.", false));
 		return ResponseEntity.status(201).body(marcaService.inserirMarca(new MarcaModel(request)));
 	}
-
 }
