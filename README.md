@@ -19,11 +19,11 @@
 	"nome": "string",
    	 "cpf": "string",
    	 "email": "string",
-   	 "dataNascimento": "string", //exemplo:"AAAA/MM/DD"
+   	 "datanascimento": "string", //exemplo:"AAAA/MM/DD"
    	 "turma": "string",
    	 "status": "string",
    	 "administrador": "string", //USER ou ADMIN
-	"criadoPor": 2, //aqui é passado o id de um admin, pode ultilizar o 2 que é um id de admmin
+	"criadopor": 2, //aqui é passado o id de um admin, pode ultilizar o 2 que é um id de admmin
 ```
 
 https://grupo-top-sorteios.azurewebsites.net/usuarios/primeiro-acesso
