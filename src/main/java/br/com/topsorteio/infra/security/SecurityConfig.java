@@ -29,10 +29,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/usuarios/login","/usuarios/esqueci-senha", "/usuarios/registrar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/usuarios/esqueci-senha").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/usuarios/registrar").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuarios/helloworld").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter/{email}").hasRole("USER")
