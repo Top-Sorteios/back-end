@@ -11,8 +11,11 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/usuarios")
 public class UserController {
+
+
     @Autowired
     private UserService repository;
 
@@ -31,14 +34,14 @@ public class UserController {
 
     @GetMapping
     @RequestMapping("/obter")
-    public ResponseEntity<List<GetAllUserResponseDTO>> pegarTodosOsUsuarios(){
+    public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         return repository.pegarTodosOsUsuarios();
     }
 
     @GetMapping
-    @RequestMapping("/obter/{id}")
-    public ResponseEntity acharPeloId(@PathVariable Integer id){
-        return repository.acharPeloID(id);
+    @RequestMapping("/obter/{email}")
+    public ResponseEntity acharPeloEmail(@PathVariable String email){
+        return repository.acharPeloEmail(email);
     }
 
     @PutMapping
@@ -51,6 +54,12 @@ public class UserController {
     @RequestMapping("/primeiro-acesso")
     public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
        return repository.primeiroAcesso(data);
+    }
+
+    @PostMapping
+    @RequestMapping("/esqueci-senha")
+    public ResponseEntity esqueciSenha(@RequestBody EsqueciSenhaRequestDTO request){
+        return repository.esqueciSenha(request);
     }
 
     @GetMapping
