@@ -81,8 +81,12 @@ public class MarcaService {
 	    return ResponseEntity.status(HttpStatus.OK).build(); 
 	}
 	
-	public Boolean removerMarca(@PathVariable Integer id) {
+	public ResponseEntity<?> removerMarca(@PathVariable Integer id) {
+		Optional<MarcaModel> marca = repository.findById(id);
+		if(marca.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		repository.deleteById(id);
-		return true;
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
