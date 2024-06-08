@@ -9,6 +9,14 @@
 | PUT | https://grupo-top-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
 | GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/helloworld | X |
 
+| MÉTODO | LINK | PERMISSÃO |
+|-----|------|-----------|
+| POST | localhost:8080/marcas/registrar | ADMIN |
+| GET | localhost:8080/marcas/obter | ADMIN |
+| GET| localhost:8080/marcas/obter/{id} | ADMIN |
+| PUT| localhost:8080/marcas/editar/{id} | ADMIN |
+| DELETE | localhost:8080/marcas/{id} | ADMIN |
+
 
 <b>Formato Requisições</b>
 
@@ -62,5 +70,27 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/esqueci-senha
 	"email": string 
 }
 ```
+| POST | localhost:8080/marcas/registrar
 
+```console
+{
+    "nome": string,
+    "titulo": string, 
+    "logo": null, // byte array
+    "banner": null, // byte array
+    "ordemExibicao": int,
+    "criadoPor": Integer
+}
+```
 
+| PUT | localhost:8080/marcas/editar/{id}
+
+``` console
+{
+    "nome": string,
+    "titulo": string, 
+    "logo": null,
+    "banner": null,
+    "ordemExibicao": int
+}
+```
