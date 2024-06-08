@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import br.com.topsorteio.dtos.ErrorDTO;
 import br.com.topsorteio.dtos.GetAllMarcasResponseDTO;
-import br.com.topsorteio.dtos.GetAllUserResponseDTO;
 import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.entities.MarcaModel;
@@ -59,9 +58,9 @@ public class MarcaService {
 	}
 	
 	 public ResponseEntity<Optional<MarcaModel>> obterMarcaPorId(Integer id){
-        Optional<MarcaModel> marcaid = repository.findById(id);
-        if(marcaid.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(marcaid, HttpStatus.OK);
+        Optional<MarcaModel> marca = repository.findById(id);
+        if(marca.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(marca, HttpStatus.OK);
     }
  
 	
@@ -77,8 +76,14 @@ public class MarcaService {
 		if(marca.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-	    repository.save(marca.get());
-	    return ResponseEntity.status(HttpStatus.OK).build(); 
+		MarcaModel marcaSalva = marca.get();
+		marcaSalva.setNome(request.nome());
+		marcaSalva.setTitulo(request.titulo());
+		marcaSalva.setLogo(request.logo());
+		marcaSalva.setBanner(request.banner());
+		marcaSalva.setOrdemExibicao(request.ordemExibicao());
+	    repository.save(marcaSalva);
+	    return new ResponseEntity<>(marcaSalva, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> removerMarca(@PathVariable Integer id) {
@@ -87,6 +92,6 @@ public class MarcaService {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		repository.deleteById(id);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return new ResponseEntity<>("Marca de ID " + id + " removida com sucesso.", HttpStatus.OK);
 	}
 }
