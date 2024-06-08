@@ -56,7 +56,7 @@ public class MarcaModel {
         this.titulo = data.titulo();
 		this.logo = data.logo();
 		this.banner = data.banner();
-	    this.ordemExibicao = data.ordemExibicao();;
+	    this.ordemExibicao = data.ordemExibicao();
 	    this.criadoPor = data.criadoPor();
     }
 }
