@@ -1,18 +1,18 @@
 | METODO | LINK | PERMISSAO |
 |-----|------|-----------|
-| POST | https://grupo-top-sorteios.azurewebsites.net/usuarios/registrar | X |
-| PUT | https://grupo-top-sorteios.azurewebsites.net/usuarios/primeiro-acesso | X |
-| POST| https://grupo-top-sorteios.azurewebsites.net/usuarios/login | X |
-| POST| https://grupo-top-sorteios.azurewebsites.net/usuarios/esqueci-senha | X |
-| GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/obter | ADMIN |
-| GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/obter/{email} | USER |
-| PUT | https://grupo-top-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
-| GET | https://grupo-top-sorteios.azurewebsites.net/usuarios/helloworld | X |
+| POST | https://modulo-sorteios.azurewebsites.net/usuarios/registrar | X |
+| PUT | https://modulo-sorteios.azurewebsites.net/usuarios/primeiro-acesso | X |
+| POST| https://modulo-sorteios.azurewebsites.net/usuarios/login | X |
+| POST| https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha | X |
+| GET | https://modulo-sorteios.azurewebsites.net/usuarios/obter | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/usuarios/obter/{email} | USER |
+| PUT | https://modulo-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
+| GET | https://modulo-sorteios.azurewebsites.net/usuarios/helloworld | X |
 
 
 <b>Formato Requisições</b>
 
-| POST | https://grupo-top-sorteios.azurewebsites.net/usuarios/registrar | X |
+| POST | https://modulo-sorteios.azurewebsites.net/usuarios/registrar | X |
 
 ```console
 {
@@ -26,7 +26,7 @@
 	"criadopor": 2, //aqui é passado o id de um admin, pode ultilizar o 2 que é um id de admin
 ```
 
-https://grupo-top-sorteios.azurewebsites.net/usuarios/primeiro-acesso
+https://modulo-sorteios.azurewebsites.net/usuarios/primeiro-acesso
 
 ```console
 {
@@ -37,7 +37,7 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/primeiro-acesso
 }
 ```
 
-https://grupo-top-sorteios.azurewebsites.net/usuarios/login
+https://modulo-sorteios.azurewebsites.net/usuarios/login
 
 ```console
 {
@@ -46,7 +46,7 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/login
 }
 ```
 
-https://grupo-top-sorteios.azurewebsites.net/usuarios/senha/{email}
+https://modulo-sorteios.azurewebsites.net/usuarios/senha/{email}
 
 ```console
 {
@@ -55,7 +55,7 @@ https://grupo-top-sorteios.azurewebsites.net/usuarios/senha/{email}
 }
 ```
 
-https://grupo-top-sorteios.azurewebsites.net/usuarios/esqueci-senha
+https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 
 ```console
 {
