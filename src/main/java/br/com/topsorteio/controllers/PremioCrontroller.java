@@ -2,15 +2,12 @@ package br.com.topsorteio.controllers;
 
 import java.util.List;
 
+import br.com.topsorteio.entities.PremioModel;
+import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.topsorteio.dtos.GetAllPremiosResponseDTO;
 import br.com.topsorteio.dtos.PremioEditRequestDTO;
@@ -26,42 +23,34 @@ public class PremioCrontroller {
 	@Autowired
     private PremioService repository;
 	
-	@PostMapping
-    @RequestMapping("/registrar")
-	public ResponseEntity registrarPremio(@RequestBody PremioRegisterRequestDTO request){
+	@PostMapping ("/registrar")
+	public ResponseEntity<?> registrarPremio(@RequestBody PremioRegisterRequestDTO request){
         return repository.registrarPremio(request);
     }
 
-	@PutMapping("/editar/nome/{codigoSku}")
-    public ResponseEntity<?> editarPremioNome(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
-        return repository.editarNome(request, codigoSku);
+    @GetMapping("/obter")
+    public ResponseEntity<List<GetAllPremiosResponseDTO>> obterTodosOsPremios(){
+        return repository.obterTodosOsPremios();
     }
 
-    // Métodos adicionais para editar outros campos
-    @PutMapping("/editar/descricao/{codigoSku}")
-    public ResponseEntity<?> editarPremioDescricao(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
-        return repository.editarDescricao(codigoSku, request);
+    @GetMapping("/obter/{codigoSku}")
+    public ResponseEntity <?> obterPremioporCodigoSku (@PathVariable String codigoSku){
+        return repository.buscarPorCodigoSku(codigoSku);
     }
 
-    @PutMapping("/editar/quantidade/{codigoSku}")
-    public ResponseEntity<?> editarPremioQuantidade(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
-        return repository.editarQuantidade(codigoSku, request);
+    @PutMapping("/editar/{codigoSku}")
+    public ResponseEntity<?> editarPremio(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
+        try {
+            ResponseEntity<?> response = repository.editarPremio(codigoSku, request);
+            return response;
+        } catch (RuntimeException ex) {
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
     }
-
-    @PutMapping("/editar/imagem/{codigoSku}")
-    public ResponseEntity<?> editarPremioImagem(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
-        return repository.editarImagem(codigoSku, request);
-    }
-    
-    @PutMapping("/remover")
+    @DeleteMapping("/remover")
     public ResponseEntity<?> removerPremio(@PathVariable String codigoSku, @RequestBody PremioEditRequestDTO request) {
     	return repository.removerPremio(codigoSku);
     	
-    }
-    
-    @PutMapping("/obter")
-    public ResponseEntity<List<GetAllPremiosResponseDTO>> obterTodosOsPremios(){
-    	return repository.obterTodosOsPremios();
     }
 }
 
