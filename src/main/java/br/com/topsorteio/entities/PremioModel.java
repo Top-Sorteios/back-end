@@ -22,44 +22,45 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name="tbpremios")
 public class PremioModel {
-	
-	@Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id", nullable=false)
-	private String codigoSku; 
-	
-	@Column(name = "nome", nullable = false, length = 100)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "premioid", nullable = false)
+    private String codigoSku;
+
+    @Column(name = "nome", nullable = false, length = 100)
     private String nome;
-	
-	@Column (name="quantidade", nullable = false)
-	private int quantidade;
-	
-	@Column(name ="descrição", nullable = false, length = 300) 
-	private String descricao;
-	
-	@Lob
+
+    @Column(name = "quantidade", nullable = false)
+    private int quantidade;
+
+    @Column(name = "descrição", nullable = false, length = 300)
+    private String descricao;
+
+    @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name = "imagem", nullable = false)
+    @Column(name = "imagem", nullable = true)
     private byte[] imagem;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "marca_id", nullable = false)
+    @JoinColumn(name = "marcaid", nullable = false)
     private MarcaModel marca;
-    
-    @Column(name="criado_por", nullable=true)
-	private Integer criadoPor;
-	
-	@Column(name="criado_em", nullable=false)
-	private Date criadoEm = new Date();
-	
 
-    // Constructor with all attributes
-    public PremioModel(String codigoSku, String nome, int quantidade, String descricao, byte[] imagem, MarcaModel marca) {
+    @Column(name = "criado_por", nullable = true)
+    private Integer criadoPor;
+
+    @Column(name = "criado_em", nullable = false)
+    private Date criadoEm = new Date();
+
+    public PremioModel(String codigoSku, String nome, int quantidade, String descricao, byte[] imagem,
+                       MarcaModel marca, Integer criadoPor) {
         this.codigoSku = codigoSku;
         this.nome = nome;
         this.quantidade = quantidade;
         this.descricao = descricao;
         this.imagem = imagem;
         this.marca = marca;
+        this.criadoPor = criadoPor;
+
     }
 }
