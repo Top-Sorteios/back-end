@@ -54,7 +54,9 @@ public class MarcaModel {
 	public MarcaModel(MarcaRegisterRequestDTO data) {
         this.nome = data.nome();
         this.titulo = data.titulo();
-	    this.ordemExibicao = data.ordemExibicao();;
+		this.logo = data.logo();
+		this.banner = data.banner();
+	    this.ordemExibicao = data.ordemExibicao();
 	    this.criadoPor = data.criadoPor();
     }
 }
