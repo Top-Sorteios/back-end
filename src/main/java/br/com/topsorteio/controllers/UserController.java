@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,12 +20,11 @@ public class UserController {
     @Autowired
     private UserService repository;
 
-    @PostMapping
-    @RequestMapping("/registrar")
-    public ResponseEntity registrarUsuario(@RequestBody UserRegisterRequestDTO request){
-        return repository.registrarUsuario(request);
+    @PostMapping("/importar-usuario")
+    public ResponseEntity importarUsuario(@RequestParam("file") MultipartFile file) {
+        ImportUsuarioRequestDTO request = new ImportUsuarioRequestDTO(file);
+        return repository.cadastrarUsuario(request);
     }
-
 
     @PostMapping
     @RequestMapping("/login")

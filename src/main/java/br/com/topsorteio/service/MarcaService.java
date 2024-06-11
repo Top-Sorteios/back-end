@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import br.com.topsorteio.dtos.ErrorDTO;
 import br.com.topsorteio.dtos.GetAllMarcasResponseDTO;
-import br.com.topsorteio.dtos.GetAllUserResponseDTO;
 import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.entities.MarcaModel;

@@ -2,10 +2,13 @@ package br.com.topsorteio.service;
 
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.entities.UserRole;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iUserRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -31,27 +38,28 @@ public class UserService {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public ResponseEntity<Object> login(LoginRequestDTO data){
-        try{
+    public ResponseEntity<Object> login(LoginRequestDTO data) {
+        try {
 
             Optional<UserModel> userOptional = repository.findByEmail(data.email());
-            if(userOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (userOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             UserModel userData = userOptional.get();
 
-            if(userData.getSenha() == null)
+            if (userData.getSenha() == null)
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false), HttpStatus.BAD_REQUEST);
 
 
-            if(userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
+            if (userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
                 return new ResponseEntity<>(new TokenResponseDTO(userData.getEmail(), tokenService.generateToken(userData), true), HttpStatus.OK);
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        }catch(RuntimeException ex){
+        } catch (RuntimeException ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
+
     public ResponseEntity<HttpStatus> editarSenha(String email, UserEditRequestDTO request){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
@@ -85,20 +93,96 @@ public class UserService {
             throw new EventInternalServerErrorException();
         }
     }
-    public ResponseEntity registrarUsuario(UserRegisterRequestDTO data) {
-        try{
-            Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
 
-            if(userResponse.isPresent())
-                return new ResponseEntity<>(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false), HttpStatus.CONFLICT);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new UserModel(data)));
-        }catch(Exception ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
+    public ResponseEntity cadastrarUsuario(ImportUsuarioRequestDTO request) {
+        MultipartFile file = request.file();
+        if (file == null || file.isEmpty()) {
+            throw new EventInternalServerErrorException("Arquivo não fornecido ou vazio.");
         }
 
+        try {
+            List<UserModel> novoUsuario = new ArrayList<>();
+            try (InputStream is = file.getInputStream();
+                 Workbook workbook = new XSSFWorkbook(is)) {
+                Sheet sheet = workbook.getSheetAt(0);
+                for (Row row : sheet) {
+                    if (row.getRowNum() == 0) { // Ignorar a linha de cabeçalho
+                        continue;
+                    }
+                    UserModel usuario = new UserModel();
 
+                    String instituicao = row.getCell(0).getStringCellValue();
+                    String curso = row.getCell(1).getStringCellValue();
+                    usuario.setTurma(instituicao + " " + curso);
+
+                    usuario.setRa((int) getCellNumericValue(row, 2));
+                    usuario.setNome(getCellStringValue(row, 3));
+                    usuario.setStatus(getCellStringValue(row, 4));
+                    usuario.setCpf(getCellStringValue(row, 6));
+                    usuario.setEmail(getCellStringValue(row, 7));
+
+                    Cell dataNascimentoCell = row.getCell(5);
+                    if (dataNascimentoCell != null) {
+                        if (dataNascimentoCell.getCellType() == CellType.STRING) {
+                            String dataNascimento = dataNascimentoCell.getStringCellValue();
+                            if (!dataNascimento.isEmpty()) {
+                                usuario.setDataNascimento(dataNascimento);
+                            } else {
+                                usuario.setDataNascimento(null);
+                            }
+                        } else if (dataNascimentoCell.getCellType() == CellType.NUMERIC) {
+                            Date date = dataNascimentoCell.getDateCellValue();
+                            usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").format(date));
+                        }
+                    }
+
+                    int userRoleInt = (int) getCellNumericValue(row, 8);
+                        usuario.setAdm(convertToUserRole(userRoleInt));
+
+                    Optional<UserModel> updateUser = repository.findByEmail(usuario.getEmail());
+                    if (updateUser.isPresent()) {
+                        UserModel updateUsuario = updateUser.get();
+                        updateUsuario.setTurma(usuario.getTurma());
+                        updateUsuario.setRa(usuario.getRa());
+                        updateUsuario.setNome(usuario.getNome());
+                        updateUsuario.setStatus(usuario.getStatus());
+                        updateUsuario.setCpf(usuario.getCpf());
+                        updateUsuario.setEmail(usuario.getEmail());
+                        updateUsuario.setDataNascimento(usuario.getDataNascimento());
+                        updateUsuario.setAdm(usuario.getAdm());
+                        novoUsuario.add(updateUsuario);
+                    } else {
+                        novoUsuario.add(usuario);
+                    }
+                }
+            }
+            repository.saveAll(novoUsuario);
+            ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.OK, "Usuários importados com sucesso!");
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            throw new EventInternalServerErrorException(e.getMessage());
+        } catch (RuntimeException ex) {
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
     }
+
+    private String getCellStringValue(Row row, int cellIndex) {
+        return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
+    }
+
+    private double getCellNumericValue(Row row, int cellIndex) {
+        return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
+    }
+    private UserRole convertToUserRole(int value) {
+        switch (value) {
+            case 0:
+                return UserRole.USER;
+            case 1:
+                return UserRole.ADMIN;
+            default:
+                throw new IllegalArgumentException("Valor inválido para UserRole: " + value);
+        }
+}
 
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
         try{
