@@ -2,7 +2,6 @@ package br.com.topsorteio.entities;
 
 import java.util.Date;
 
-import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,9 +24,9 @@ import lombok.NoArgsConstructor;
 public class PremioModel {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="premiosku", nullable=false, length = 30)
-	private String sku; 
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="id", nullable=false)
+	private String codigoSku; 
 	
 	@Column(name = "nome", nullable = false, length = 100)
     private String nome;
@@ -46,10 +45,17 @@ public class PremioModel {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "marca_id", nullable = false)
     private MarcaModel marca;
+    
+    @Column(name="criado_por", nullable=true)
+	private Integer criadoPor;
+	
+	@Column(name="criado_em", nullable=false)
+	private Date criadoEm = new Date();
+	
 
     // Constructor with all attributes
-    public PremioModel(String sku, String nome, int quantidade, String descricao, byte[] imagem, MarcaModel marca) {
-        this.sku = sku;
+    public PremioModel(String codigoSku, String nome, int quantidade, String descricao, byte[] imagem, MarcaModel marca) {
+        this.codigoSku = codigoSku;
         this.nome = nome;
         this.quantidade = quantidade;
         this.descricao = descricao;
