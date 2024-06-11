@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IPremioRepository extends JpaRepository<PremioModel, Integer> {
-	
-	Optional<PremioModel> findByNome(String nome); 
-	
-	Optional<PremioModel> findByCodigoSku(String codigoSku); 
+
+	Optional<PremioModel> findByNome(String nome);
+
+	Optional<PremioModel> findByCodigoSku(String codigoSku);
 
     	List<PremioModel> findByNomeContainingIgnoreCase(String nome);
 

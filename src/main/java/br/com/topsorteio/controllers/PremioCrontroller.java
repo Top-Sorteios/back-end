@@ -14,10 +14,10 @@ import br.com.topsorteio.service.PremioService;
 @RestController
 @RequestMapping("/premios")
 public class PremioCrontroller {
-	
+
 	@Autowired
     private PremioService repository;
-	
+
 	@PostMapping
     @RequestMapping("/registrar")
 	public ResponseEntity registrarUsuario(@RequestBody PremioRegisterRequestDTO request){
