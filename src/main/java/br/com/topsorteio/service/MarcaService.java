@@ -32,7 +32,7 @@ public class MarcaService {
 
 
         for(MarcaModel marca : marcas)
-            response.add(new GetAllMarcasResponseDTO(marca.getNome(), marca.getTitulo(), marca.getLogo(), marca.getBanner(), marca.getOrdemExibicao()));
+            response.add(new GetAllMarcasResponseDTO(marca.getNome(), marca.getTitulo(), marca.getLogo(), marca.getBanner(), marca.getOrdemExibicao(), marca.getCriadoPor(), marca.getCriadoEm()));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -43,14 +43,14 @@ public class MarcaService {
         return new ResponseEntity<>(marca, HttpStatus.OK);
     }
 	
-	public ResponseEntity<?> registrarMarca(@RequestBody MarcaRegisterRequestDTO request) {
+	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) {
 		Optional<MarcaModel> marca = repository.findByNome(request.nome());
 		if(marca.isPresent())
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, 409, "Marca já existe.", false));
 		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new MarcaModel(request)));
 	}
 	
-	public ResponseEntity<?> editarMarca(@PathVariable Integer id, @RequestBody MarcaEditRequestDTO request) {
+	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) {
 		Optional<MarcaModel> marca = repository.findById(id);
 		if(marca.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,7 +65,7 @@ public class MarcaService {
 	    return new ResponseEntity<>(marcaSalva, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<?> removerMarca(@PathVariable Integer id) {
+	public ResponseEntity<?> removerMarca(Integer id) {
 		Optional<MarcaModel> marca = repository.findById(id);
 		if(marca.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
