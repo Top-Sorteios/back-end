@@ -108,6 +108,7 @@ public class UserService {
 
         try {
             List<UserModel> novoUsuario = new ArrayList<>();
+
             try (InputStream is = file.getInputStream();
                  Workbook workbook = new XSSFWorkbook(is)) {
                 Sheet sheet = workbook.getSheetAt(0);
@@ -138,8 +139,8 @@ public class UserService {
                     }
                     usuario.setNome(getCellStringValue(row, 5));
                     usuario.setStatus(getCellStringValue(row, 11));
-                    usuario.setCpf(getCellStringValue(row, 15));
                     usuario.setEmail(getCellStringValue(row, 30));
+                    usuario.setCpf(getCpfStringValue(row, 15));
                     usuario.setCriadoPor(criador.get().getId());
 
                     Cell dataNascimentoCell = row.getCell(14);
@@ -213,6 +214,12 @@ public class UserService {
 
     private String getCellStringValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
+    }
+
+    private String getCpfStringValue(Row row, int cellIndex) {
+        long cpf = (long) getCellNumericValue(row, cellIndex);
+
+        return Long.toString(cpf);
     }
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;

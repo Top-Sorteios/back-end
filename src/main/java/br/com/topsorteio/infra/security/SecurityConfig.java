@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuarios/helloworld").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios/obter/{email}").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/editar/senha/{email}").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/primeiro-acesso").permitAll()
