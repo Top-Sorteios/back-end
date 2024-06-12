@@ -21,8 +21,8 @@ public class UserModel implements UserDetails {
     @Column(name = "usuarioid", nullable = false)
     private Integer id;
 
-    @Column(name = "ra")
-    private Integer ra;
+    @Column(name = "turmaid", nullable = false)
+    private Integer turma;
 
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
@@ -36,17 +36,18 @@ public class UserModel implements UserDetails {
     @Column(name = "senha", nullable = true)
     private String senha;
 
-    @Column(name = "datanascimento", nullable = false, columnDefinition = "date")
+    @Column(name = "datanascimento", nullable = false)
     private String dataNascimento;
 
-    @Column(name = "turma", nullable = false, length = 50)
-    private String turma;
 
     @Column(name = "status", nullable = true, length = 20)
     private String status;
 
     @Column(name = "administrador", nullable = false)
     private UserRole adm;
+
+    @Column(name = "participando_sorteio", nullable = false)
+    private boolean participandoSorteio;
 
     @Column(name = "criadopor", nullable = true)
     private int criadoPor;

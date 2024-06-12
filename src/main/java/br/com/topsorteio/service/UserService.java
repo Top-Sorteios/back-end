@@ -94,6 +94,7 @@ public class UserService {
         }
     }
 
+//    ------------
     public ResponseEntity cadastrarUsuario(ImportUsuarioRequestDTO request) {
         MultipartFile file = request.file();
         if (file == null || file.isEmpty()) {
@@ -111,17 +112,15 @@ public class UserService {
                     }
                     UserModel usuario = new UserModel();
 
-                    String instituicao = row.getCell(0).getStringCellValue();
-                    String curso = row.getCell(1).getStringCellValue();
-                    usuario.setTurma(instituicao + " " + curso);
 
-                    usuario.setRa((int) getCellNumericValue(row, 2));
-                    usuario.setNome(getCellStringValue(row, 3));
-                    usuario.setStatus(getCellStringValue(row, 4));
-                    usuario.setCpf(getCellStringValue(row, 6));
-                    usuario.setEmail(getCellStringValue(row, 7));
+                    usuario.setNome(getCellStringValue(row, 5));
+                    usuario.setTurma(1);
+                    usuario.setStatus(getCellStringValue(row, 11));
+                    usuario.setCpf(getCellStringValue(row, 15));
+                    usuario.setEmail(getCellStringValue(row, 30));
+                    usuario.setCriadoPor(1);
 
-                    Cell dataNascimentoCell = row.getCell(5);
+                    Cell dataNascimentoCell = row.getCell(14);
                     if (dataNascimentoCell != null) {
                         if (dataNascimentoCell.getCellType() == CellType.STRING) {
                             String dataNascimento = dataNascimentoCell.getStringCellValue();
@@ -132,18 +131,22 @@ public class UserService {
                             }
                         } else if (dataNascimentoCell.getCellType() == CellType.NUMERIC) {
                             Date date = dataNascimentoCell.getDateCellValue();
-                            usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").format(date));
+                            usuario.setDataNascimento(new SimpleDateFormat("yyyy/MM/dd").format(date));
                         }
                     }
 
-                    int userRoleInt = (int) getCellNumericValue(row, 8);
-                        usuario.setAdm(convertToUserRole(userRoleInt));
+
+//                    int userRoleInt = (int) getCellNumericValue(row, 77);
+                    usuario.setAdm(convertToUserRole(1));
+                    usuario.setParticipandoSorteio(false);
+
+
+
 
                     Optional<UserModel> updateUser = repository.findByEmail(usuario.getEmail());
                     if (updateUser.isPresent()) {
                         UserModel updateUsuario = updateUser.get();
                         updateUsuario.setTurma(usuario.getTurma());
-                        updateUsuario.setRa(usuario.getRa());
                         updateUsuario.setNome(usuario.getNome());
                         updateUsuario.setStatus(usuario.getStatus());
                         updateUsuario.setCpf(usuario.getCpf());
@@ -169,7 +172,6 @@ public class UserService {
     private String getCellStringValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
     }
-
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
@@ -180,7 +182,7 @@ public class UserService {
             case 1:
                 return UserRole.ADMIN;
             default:
-                throw new IllegalArgumentException("Valor inválido para UserRole: " + value);
+                return null;
         }
 }
 
@@ -206,6 +208,8 @@ public class UserService {
 
 
     }
+//------------------
+
 
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
