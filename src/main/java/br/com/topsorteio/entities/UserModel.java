@@ -40,7 +40,7 @@ public class UserModel implements UserDetails {
     @Column(name = "datanascimento", nullable = false)
     private String dataNascimento;
 
-    @Column(name = "status", nullable = true)
+    @Column(name = "status", nullable = false)
     private String status;
 
     @Column(name = "administrador", nullable = false)
@@ -49,7 +49,7 @@ public class UserModel implements UserDetails {
     @Column(name = "participando_sorteio", nullable = false)
     private boolean participandoSorteio;
 
-    @Column(name = "criadopor", nullable = true)
+    @Column(name = "criadopor", nullable = false)
     private int criadoPor;
 
     @Column(name = "criadoem", nullable = false)

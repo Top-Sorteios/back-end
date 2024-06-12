@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class TurmaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "turmaid", nullable = false)
+    @Column(name = "turmaid", nullable = true)
     private Integer id;
 
     @Column(name = "nome", nullable = false)
@@ -26,9 +27,15 @@ public class TurmaModel {
     private boolean participandoSorteio;
 
     @Column(name = "criadoem", nullable = false)
-    private Date criadoem;
+    private Date criadoem = new Date();
 
     @OneToMany
     @JoinColumn(name = "turmaid")
     private List<UserModel> usuarios;
+
+    public TurmaModel(String nome, boolean participandoSorteio){
+        this.nome = nome;
+        this.participandoSorteio = participandoSorteio;
+    }
+
 }

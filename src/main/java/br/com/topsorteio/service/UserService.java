@@ -123,12 +123,19 @@ public class UserService {
 
                     usuario.setNome(getCellStringValue(row, 5));
 
+
                     String Turma = (String) getCellStringValue(row, 10);
+
                     Optional<TurmaModel> turma = turmaRepository.findByNome(Turma);
 
-                    if(turma.isEmpty()) return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Não consta Turma", false), HttpStatus.BAD_REQUEST);
+                    if(turma.isEmpty()){
+                        TurmaModel criarTurma = new TurmaModel(Turma, true);
+                        turmaRepository.save(criarTurma);
+                        usuario.setTurma(criarTurma);
+                    }else{
+                        usuario.setTurma(turma.get());
+                    }
 
-                    usuario.setTurma(turma.get());
                     usuario.setStatus(getCellStringValue(row, 11));
                     usuario.setCpf(getCellStringValue(row, 15));
                     usuario.setEmail(getCellStringValue(row, 30));
@@ -162,6 +169,7 @@ public class UserService {
                     }
 
 
+
                     usuario.setParticipandoSorteio(false);
 
 
@@ -189,6 +197,17 @@ public class UserService {
         } catch (RuntimeException ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
+    }
+
+    private TurmaModel createTurma(CreateTurmaRequestDTO request){
+        TurmaModel turma = new TurmaModel();
+
+        turma.setNome(request.nome());
+        turma.setParticipandoSorteio(request.participandoSorteio());
+        BeanUtils.copyProperties(request, turma);
+        turmaRepository.save(turma);
+
+        return turma;
     }
 
     private String getCellStringValue(Row row, int cellIndex) {
