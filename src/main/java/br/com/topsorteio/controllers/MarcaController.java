@@ -21,11 +21,13 @@ public class MarcaController {
 	
 	@GetMapping("/obter")
 	public ResponseEntity<List<GetAllMarcasResponseDTO>> obterTodasAsMarcas(){
+
 		return repository.obterTodasAsMarcas();
 	}
 	
 	@GetMapping("/obter/{id}")
 	public ResponseEntity<?> obterMarcaPorId(@PathVariable Integer id){
+
 		return repository.obterMarcaPorId(id);
 	}
 	
