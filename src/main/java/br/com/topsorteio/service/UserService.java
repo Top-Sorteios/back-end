@@ -119,15 +119,16 @@ public class UserService {
                     Optional<UserModel> criador = repository.findByEmail(request.email());
 
 
-                    if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Criador Inválido", false), HttpStatus.BAD_REQUEST);
+                    if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Email do criador Inválido", false), HttpStatus.BAD_REQUEST);
 
-                    usuario.setNome(getCellStringValue(row, 5));
+                    if(criador.get().getAdm() != UserRole.ADMIN) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
 
 
                     String Turma = (String) getCellStringValue(row, 10);
-
                     Optional<TurmaModel> turma = turmaRepository.findByNome(Turma);
 
+                    //SetTurma
                     if(turma.isEmpty()){
                         TurmaModel criarTurma = new TurmaModel(Turma, true);
                         turmaRepository.save(criarTurma);
@@ -135,7 +136,7 @@ public class UserService {
                     }else{
                         usuario.setTurma(turma.get());
                     }
-
+                    usuario.setNome(getCellStringValue(row, 5));
                     usuario.setStatus(getCellStringValue(row, 11));
                     usuario.setCpf(getCellStringValue(row, 15));
                     usuario.setEmail(getCellStringValue(row, 30));
