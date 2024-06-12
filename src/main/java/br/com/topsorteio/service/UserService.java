@@ -1,11 +1,13 @@
 package br.com.topsorteio.service;
 
 import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.entities.UserRole;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
+import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,6 +30,9 @@ public class UserService {
 
     @Autowired
     private iUserRepository repository;
+
+    @Autowired
+    private iTurmaRepository turmaRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -111,14 +116,23 @@ public class UserService {
                         continue;
                     }
                     UserModel usuario = new UserModel();
+                    Optional<UserModel> criador = repository.findByEmail(request.email());
 
+
+                    if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Criador Inválido", false), HttpStatus.BAD_REQUEST);
 
                     usuario.setNome(getCellStringValue(row, 5));
-                    usuario.setTurma(1);
+
+                    String Turma = (String) getCellStringValue(row, 10);
+                    Optional<TurmaModel> turma = turmaRepository.findByNome(Turma);
+
+                    if(turma.isEmpty()) return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Não consta Turma", false), HttpStatus.BAD_REQUEST);
+
+                    usuario.setTurma(turma.get());
                     usuario.setStatus(getCellStringValue(row, 11));
                     usuario.setCpf(getCellStringValue(row, 15));
                     usuario.setEmail(getCellStringValue(row, 30));
-                    usuario.setCriadoPor(1);
+                    usuario.setCriadoPor(criador.get().getId());
 
                     Cell dataNascimentoCell = row.getCell(14);
                     if (dataNascimentoCell != null) {
@@ -135,12 +149,20 @@ public class UserService {
                         }
                     }
 
+                    try{
+                        int userRoleInt = (int) getCellNumericValue(row, 77);
 
-//                    int userRoleInt = (int) getCellNumericValue(row, 77);
-                    usuario.setAdm(convertToUserRole(1));
+                        if(convertToUserRole(userRoleInt) == UserRole.ADMIN){
+                            usuario.setAdm(UserRole.ADMIN);
+                        }else {
+                            usuario.setAdm(UserRole.USER);
+                        }
+                    }catch(Exception ex){
+                        usuario.setAdm(UserRole.USER);
+                    }
+
+
                     usuario.setParticipandoSorteio(false);
-
-
 
 
                     Optional<UserModel> updateUser = repository.findByEmail(usuario.getEmail());
@@ -176,14 +198,19 @@ public class UserService {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
     private UserRole convertToUserRole(int value) {
-        switch (value) {
+        UserRole role;
+        switch(value) {
             case 0:
-                return UserRole.USER;
+                role = UserRole.USER;
+                break;
             case 1:
-                return UserRole.ADMIN;
+                role = UserRole.ADMIN;
+                break;
             default:
-                return null;
+                role = UserRole.USER;
         }
+
+        return role;
 }
 
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){

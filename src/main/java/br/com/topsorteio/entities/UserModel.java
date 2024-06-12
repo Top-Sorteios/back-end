@@ -21,16 +21,17 @@ public class UserModel implements UserDetails {
     @Column(name = "usuarioid", nullable = false)
     private Integer id;
 
-    @Column(name = "turmaid", nullable = false)
-    private Integer turma;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "turmaid")
+    private TurmaModel turma;
 
-    @Column(name = "nome", nullable = false, length = 100)
+    @Column(name = "nome", nullable = false)
     private String nome;
 
-    @Column(name = "cpf", nullable = false, unique = true, length = 11)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
 
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "senha", nullable = true)
@@ -39,8 +40,7 @@ public class UserModel implements UserDetails {
     @Column(name = "datanascimento", nullable = false)
     private String dataNascimento;
 
-
-    @Column(name = "status", nullable = true, length = 20)
+    @Column(name = "status", nullable = true)
     private String status;
 
     @Column(name = "administrador", nullable = false)
