@@ -3,15 +3,7 @@ package br.com.topsorteio.entities;
 import java.util.Date;
 
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -45,18 +37,19 @@ public class MarcaModel {
 	@Column(name="ordem_exibicao", nullable=false)
 	private int ordemExibicao;
 
-	@Column(name="criado_por", nullable=true)
-	private Integer criadoPor;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "criado_por", nullable = false)
+	private UserModel criadoPor;
 
 	@Column(name="criado_em", nullable=false)
 	private Date criadoEm = new Date();
 
-	public MarcaModel(MarcaRegisterRequestDTO data) {
+	public MarcaModel(MarcaRegisterRequestDTO data, UserModel user) {
 		this.nome = data.nome();
 		this.titulo = data.titulo();
 		this.logo = data.logo();
 		this.banner = data.banner();
 		this.ordemExibicao = data.ordemExibicao();
-		this.criadoPor = data.criadoPor();
+		this.criadoPor = user;
 	}
 }
