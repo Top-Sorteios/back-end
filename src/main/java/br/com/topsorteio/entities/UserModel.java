@@ -21,31 +21,35 @@ public class UserModel implements UserDetails {
     @Column(name = "usuarioid", nullable = false)
     private Integer id;
 
-    @Column(name = "nome", nullable = false, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "turmaid")
+    private TurmaModel turma;
+
+    @Column(name = "nome", nullable = false)
     private String nome;
 
-    @Column(name = "cpf", nullable = false, unique = true, length = 11)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
 
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "senha", nullable = true)
     private String senha;
 
-    @Column(name = "datanascimento", nullable = false, columnDefinition = "date")
+    @Column(name = "datanascimento", nullable = false)
     private String dataNascimento;
 
-    @Column(name = "turma", nullable = false, length = 50)
-    private String turma;
-
-    @Column(name = "status", nullable = true, length = 20)
+    @Column(name = "status", nullable = false)
     private String status;
 
     @Column(name = "administrador", nullable = false)
-    private UserRole adm;
+    private boolean adm;
 
-    @Column(name = "criadopor", nullable = true)
+    @Column(name = "participando_sorteio", nullable = false)
+    private boolean participandoSorteio;
+
+    @Column(name = "criadopor", nullable = false)
     private int criadoPor;
 
     @Column(name = "criadoem", nullable = false)
@@ -65,7 +69,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.adm == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if(this.adm) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -99,4 +103,5 @@ public class UserModel implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
