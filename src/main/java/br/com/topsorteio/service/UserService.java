@@ -50,7 +50,7 @@ public class UserService {
 
             UserModel userData = userOptional.get();
 
-            if (userData.getSenha() == null)
+            if (userData.getSenha() == null || userData.getSenha().isEmpty())
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false), HttpStatus.BAD_REQUEST);
 
 
@@ -256,10 +256,11 @@ public class UserService {
 
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
 
-            if(usuarioPrimeiroAcesso != null)
-                return new ResponseEntity<>(new TokenResponseDTO(data.email(), tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
+            if(usuarioPrimeiroAcesso == null )
+                return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
 
-            return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
+
+            return new ResponseEntity<>(new TokenResponseDTO(data.email(), tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
 
         }catch (RuntimeException ex){
             throw new EventInternalServerErrorException(ex.getMessage());
@@ -277,7 +278,7 @@ public class UserService {
             if(usuarioModel.getEmail().equals(data.email())
                     && usuarioModel.getCpf().equals(data.cpf())
                     && usuarioModel.getDataNascimento().equals(data.datanascimento())
-                    && (usuarioModel.getSenha() == null)){
+                    && (usuarioModel.getSenha() == null || usuarioModel.getSenha().isEmpty())){
 
                 BeanUtils.copyProperties(data, usuario.get());
                 usuarioModel.setSenha(passwordEncoder.encode(data.senha()));
