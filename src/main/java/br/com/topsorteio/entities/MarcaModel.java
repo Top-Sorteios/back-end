@@ -26,12 +26,12 @@ public class MarcaModel {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name="logo", nullable=true)
+	@Column(name="logo")
 	private byte[] logo;
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name="banner", nullable=true)
+	@Column(name="banner")
 	private byte[] banner;
 
 	@Column(name="ordem_exibicao", nullable=false)
