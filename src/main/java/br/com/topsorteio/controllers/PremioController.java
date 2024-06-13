@@ -1,6 +1,6 @@
 package br.com.topsorteio.controllers;
 
-import br.com.topsorteio.dtos.GetAllPremiosResponseDTO;
+import br.com.topsorteio.dtos.PremiosCadastradosResponseDTO;
 import br.com.topsorteio.dtos.PremioEditRequestDTO;
 import br.com.topsorteio.dtos.PremioRegisterRequestDTO;
 import br.com.topsorteio.service.PremioService;
@@ -19,7 +19,7 @@ public class PremioController {
     private PremioService repository;
 
     @GetMapping("/obter")
-    public ResponseEntity<List<GetAllPremiosResponseDTO>> obterTodosOsPremios(){
+    public ResponseEntity<List<PremiosCadastradosResponseDTO>> obterTodosOsPremios(){
         return repository.obterTodosOsPremios();
     }
 
