@@ -52,11 +52,11 @@ public class MarcaModel {
 	private Date criadoEm = new Date();
 
 	public MarcaModel(MarcaRegisterRequestDTO data) {
-        this.nome = data.nome();
-        this.titulo = data.titulo();
+		this.nome = data.nome();
+		this.titulo = data.titulo();
 		this.logo = data.logo();
 		this.banner = data.banner();
-	    this.ordemExibicao = data.ordemExibicao();
-	    this.criadoPor = data.criadoPor();
-    }
+		this.ordemExibicao = data.ordemExibicao();
+		this.criadoPor = data.criadoPor();
+	}
 }
