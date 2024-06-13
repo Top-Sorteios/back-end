@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.topsorteio.dtos.GetAllMarcasResponseDTO;
+import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
 import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.service.MarcaService;
@@ -20,7 +20,7 @@ public class MarcaController {
 	private MarcaService repository;
 
 	@GetMapping("/obter")
-	public ResponseEntity<List<GetAllMarcasResponseDTO>> obterTodasAsMarcas(){
+	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
 
 		return repository.obterTodasAsMarcas();
 	}

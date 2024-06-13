@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Optional;
+
+import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.topsorteio.dtos.ErrorDTO;
-import br.com.topsorteio.dtos.GetAllMarcasResponseDTO;
+import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
 import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.entities.MarcaModel;
@@ -20,36 +22,43 @@ import br.com.topsorteio.repositories.IMarcaRepository;
 public class MarcaService {
 	
 	@Autowired
-	private IMarcaRepository repository;
+	private IMarcaRepository marcaRepository;
+
+	@Autowired
+	private iUserRepository userRepository;
 	
-	public ResponseEntity<List<GetAllMarcasResponseDTO>> obterTodasAsMarcas(){
-		List<MarcaModel> marcas = repository.findAll();
-        List<GetAllMarcasResponseDTO> response = new ArrayList<>();
+	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
+		List<MarcaModel> marcas = marcaRepository.findAll();
+        List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
 
         if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-
         for(MarcaModel marca : marcas)
-            response.add(new GetAllMarcasResponseDTO(marca.getNome(), marca.getTitulo(), marca.getLogo(), marca.getBanner(), marca.getOrdemExibicao(), marca.getCriadoPor(), marca.getCriadoEm()));
+            response.add(new MarcasCadastradasResponseDTO(marca.getNome(), marca.getCriadoPor().getNome(), marca.getCriadoEm()));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	 public ResponseEntity<Optional<MarcaModel>> obterMarcaPorId(Integer id){
-        Optional<MarcaModel> marca = repository.findById(id);
+        Optional<MarcaModel> marca = marcaRepository.findById(id);
         if(marca.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(marca, HttpStatus.OK);
     }
 	
 	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) {
-		Optional<MarcaModel> marca = repository.findByNome(request.nome());
-		if(marca.isPresent())
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, 409, "Marca já existe.", false));
-		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new MarcaModel(request)));
+		Optional<UserModel> userOpt = userRepository.findById(request.criadoPor());
+		if (userOpt.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
+		MarcaModel marca = new MarcaModel(request, userOpt.get());
+		MarcaModel marcaSalva = marcaRepository.save(marca);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(marcaSalva);
 	}
 	
 	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) {
-		Optional<MarcaModel> marca = repository.findById(id);
+		Optional<MarcaModel> marca = marcaRepository.findById(id);
 		if(marca.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -59,16 +68,16 @@ public class MarcaService {
 		marcaSalva.setLogo(request.logo());
 		marcaSalva.setBanner(request.banner());
 		marcaSalva.setOrdemExibicao(request.ordemExibicao());
-	    repository.save(marcaSalva);
+	    marcaRepository.save(marcaSalva);
 	    return new ResponseEntity<>(marcaSalva, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> removerMarca(Integer id) {
-		Optional<MarcaModel> marca = repository.findById(id);
+		Optional<MarcaModel> marca = marcaRepository.findById(id);
 		if(marca.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		repository.deleteById(id);
+		marcaRepository.deleteById(id);
 		return new ResponseEntity<>("Marca de ID " + id + " removida com sucesso.", HttpStatus.OK);
 	}
 }
