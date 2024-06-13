@@ -187,7 +187,7 @@ public class UserService {
                 }
             }
             repository.saveAll(novoUsuario);
-            ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.OK, "Usuários importados com sucesso!");
+            ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!");
             return ResponseEntity.ok(response);
         } catch (IOException e) {
             throw new EventInternalServerErrorException(e.getMessage());
