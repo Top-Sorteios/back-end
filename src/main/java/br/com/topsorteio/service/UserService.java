@@ -188,7 +188,7 @@ public class UserService {
             }
             repository.saveAll(novoUsuario);
             ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!");
-            return ResponseEntity.ok(response);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IOException e) {
             throw new EventInternalServerErrorException(e.getMessage());
         } catch (RuntimeException ex) {
@@ -219,21 +219,8 @@ public class UserService {
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
-    private UserRole convertToUserRole(int value) {
-        UserRole role;
-        switch(value) {
-            case 0:
-                role = UserRole.USER;
-                break;
-            case 1:
-                role = UserRole.ADMIN;
-                break;
-            default:
-                role = UserRole.USER;
-        }
 
-        return role;
-}
+
 
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
         try{
