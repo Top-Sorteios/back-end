@@ -1,11 +1,15 @@
 package br.com.topsorteio.service;
 
 import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
+import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -21,6 +29,9 @@ public class UserService {
 
     @Autowired
     private iUserRepository repository;
+
+    @Autowired
+    private iTurmaRepository turmaRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -31,27 +42,28 @@ public class UserService {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public ResponseEntity<Object> login(LoginRequestDTO data){
-        try{
+    public ResponseEntity<Object> login(LoginRequestDTO data) {
+        try {
 
             Optional<UserModel> userOptional = repository.findByEmail(data.email());
-            if(userOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (userOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             UserModel userData = userOptional.get();
 
-            if(userData.getSenha() == null)
+            if (userData.getSenha() == null)
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false), HttpStatus.BAD_REQUEST);
 
 
-            if(userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
+            if (userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
                 return new ResponseEntity<>(new TokenResponseDTO(userData.getEmail(), tokenService.generateToken(userData), true), HttpStatus.OK);
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        }catch(RuntimeException ex){
+        } catch (RuntimeException ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
+
     public ResponseEntity<HttpStatus> editarSenha(String email, UserEditRequestDTO request){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
@@ -79,26 +91,136 @@ public class UserService {
             if(pegarPeloEmail.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             UserModel usuario = pegarPeloEmail.get();
-            return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getAdm(), usuario.getStatus(), usuario.getDataNascimento(), usuario.getTurma()), HttpStatus.OK);
+            return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.isAdm(), usuario.getStatus(), usuario.getDataNascimento(), new TurmaResponseDTO(usuario.getTurma().getId(), usuario.getTurma().getNome(), usuario.getTurma().isParticipandoSorteio(), usuario.getTurma().getCriadoem())), HttpStatus.OK);
 
         }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException();
         }
     }
-    public ResponseEntity registrarUsuario(UserRegisterRequestDTO data) {
-        try{
-            Optional<UserModel> userResponse = this.repository.findByEmail(data.email());
 
-            if(userResponse.isPresent())
-                return new ResponseEntity<>(new ErrorDTO(HttpStatus.CONFLICT, 400, "Usuário já existe.", false), HttpStatus.CONFLICT);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new UserModel(data)));
-        }catch(Exception ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
+//    ------------
+    public ResponseEntity cadastrarUsuario(ImportUsuarioRequestDTO request) {
+        MultipartFile file = request.file();
+        if (file == null || file.isEmpty()) {
+            throw new EventInternalServerErrorException("Arquivo não fornecido ou vazio.");
         }
 
+        try {
+            List<UserModel> novoUsuario = new ArrayList<>();
 
+            try (InputStream is = file.getInputStream();
+                 Workbook workbook = new XSSFWorkbook(is)) {
+                Sheet sheet = workbook.getSheetAt(0);
+                for (Row row : sheet) {
+                    if (row.getRowNum() == 0) { // Ignorar a linha de cabeçalho
+                        continue;
+                    }
+                    UserModel usuario = new UserModel();
+                    Optional<UserModel> criador = repository.findByEmail(request.email());
+
+
+                    if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Email do criador Inválido", false), HttpStatus.BAD_REQUEST);
+
+                    if(!criador.get().isAdm()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
+
+
+                    String Turma = (String) getCellStringValue(row, 10);
+                    Optional<TurmaModel> turma = turmaRepository.findByNome(Turma);
+
+                    //SetTurma
+                    if(turma.isEmpty()){
+                        TurmaModel criarTurma = new TurmaModel(Turma, true);
+                        turmaRepository.save(criarTurma);
+                        usuario.setTurma(criarTurma);
+                    }else{
+                        usuario.setTurma(turma.get());
+                    }
+                    usuario.setNome(getCellStringValue(row, 5));
+                    usuario.setStatus(getCellStringValue(row, 11));
+                    usuario.setEmail(getCellStringValue(row, 30));
+                    usuario.setCpf(getCpfStringValue(row, 15));
+                    usuario.setCriadoPor(criador.get().getId());
+
+                    Cell dataNascimentoCell = row.getCell(14);
+                    if (dataNascimentoCell != null) {
+                        if (dataNascimentoCell.getCellType() == CellType.STRING) {
+                            String dataNascimento = dataNascimentoCell.getStringCellValue();
+                            if (!dataNascimento.isEmpty()) {
+                                usuario.setDataNascimento(dataNascimento);
+                            } else {
+                                usuario.setDataNascimento(null);
+                            }
+                        } else if (dataNascimentoCell.getCellType() == CellType.NUMERIC) {
+                            Date date = dataNascimentoCell.getDateCellValue();
+                            usuario.setDataNascimento(new SimpleDateFormat("yyyy/MM/dd").format(date));
+                        }
+                    }
+
+                    try{
+                        int userRoleInt = (int) getCellNumericValue(row, 77);
+
+                        usuario.setAdm(userRoleInt == 1);
+                    }catch(Exception ex){
+                        usuario.setAdm(false);
+                    }
+
+
+
+                    usuario.setParticipandoSorteio(false);
+
+
+                    Optional<UserModel> updateUser = repository.findByEmail(usuario.getEmail());
+                    if (updateUser.isPresent()) {
+                        UserModel updateUsuario = updateUser.get();
+                        updateUsuario.setTurma(usuario.getTurma());
+                        updateUsuario.setNome(usuario.getNome());
+                        updateUsuario.setStatus(usuario.getStatus());
+                        updateUsuario.setCpf(usuario.getCpf());
+                        updateUsuario.setEmail(usuario.getEmail());
+                        updateUsuario.setDataNascimento(usuario.getDataNascimento());
+                        updateUsuario.setAdm(usuario.isAdm());
+                        novoUsuario.add(updateUsuario);
+                    } else {
+                        novoUsuario.add(usuario);
+                    }
+                }
+            }
+            repository.saveAll(novoUsuario);
+            ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (IOException e) {
+            throw new EventInternalServerErrorException(e.getMessage());
+        } catch (RuntimeException ex) {
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
     }
+
+    private TurmaModel createTurma(CreateTurmaRequestDTO request){
+        TurmaModel turma = new TurmaModel();
+
+        turma.setNome(request.nome());
+        turma.setParticipandoSorteio(request.participandoSorteio());
+        BeanUtils.copyProperties(request, turma);
+        turmaRepository.save(turma);
+
+        return turma;
+    }
+
+    private String getCellStringValue(Row row, int cellIndex) {
+        return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
+    }
+
+    private String getCpfStringValue(Row row, int cellIndex) {
+        long cpf = (long) getCellNumericValue(row, cellIndex);
+
+        return Long.toString(cpf);
+    }
+    private double getCellNumericValue(Row row, int cellIndex) {
+        return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
+    }
+
+
 
     public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
         try{
@@ -122,6 +244,8 @@ public class UserService {
 
 
     }
+//------------------
+
 
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
@@ -179,7 +303,7 @@ public class UserService {
 
 
             for(UserModel user : allUser)
-                response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.getAdm(), user.getStatus(), user.getDataNascimento(), user.getTurma()));
+                response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.isAdm(), user.getStatus(), user.getDataNascimento(), new TurmaResponseDTO(user.getTurma().getId(), user.getTurma().getNome(), user.getTurma().isParticipandoSorteio(), user.getTurma().getCriadoem())));
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 
