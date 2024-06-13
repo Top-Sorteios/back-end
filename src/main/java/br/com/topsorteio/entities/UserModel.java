@@ -44,7 +44,7 @@ public class UserModel implements UserDetails {
     private String status;
 
     @Column(name = "administrador", nullable = false)
-    private UserRole adm;
+    private boolean adm;
 
     @Column(name = "participando_sorteio", nullable = false)
     private boolean participandoSorteio;
@@ -69,7 +69,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.adm == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if(this.adm) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

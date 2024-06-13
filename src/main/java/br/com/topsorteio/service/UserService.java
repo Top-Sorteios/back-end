@@ -3,7 +3,6 @@ package br.com.topsorteio.service;
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.entities.UserRole;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
@@ -92,7 +91,7 @@ public class UserService {
             if(pegarPeloEmail.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             UserModel usuario = pegarPeloEmail.get();
-            return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getAdm(), usuario.getStatus(), usuario.getDataNascimento(), usuario.getTurma()), HttpStatus.OK);
+            return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.isAdm(), usuario.getStatus(), usuario.getDataNascimento(), new TurmaResponseDTO(usuario.getTurma().getId(), usuario.getTurma().getNome(), usuario.getTurma().isParticipandoSorteio(), usuario.getTurma().getCriadoem())), HttpStatus.OK);
 
         }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException();
@@ -122,7 +121,7 @@ public class UserService {
 
                     if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Email do criador Inválido", false), HttpStatus.BAD_REQUEST);
 
-                    if(criador.get().getAdm() != UserRole.ADMIN) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    if(!criador.get().isAdm()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
 
 
@@ -161,13 +160,9 @@ public class UserService {
                     try{
                         int userRoleInt = (int) getCellNumericValue(row, 77);
 
-                        if(convertToUserRole(userRoleInt) == UserRole.ADMIN){
-                            usuario.setAdm(UserRole.ADMIN);
-                        }else {
-                            usuario.setAdm(UserRole.USER);
-                        }
+                        usuario.setAdm(userRoleInt == 1);
                     }catch(Exception ex){
-                        usuario.setAdm(UserRole.USER);
+                        usuario.setAdm(false);
                     }
 
 
@@ -184,7 +179,7 @@ public class UserService {
                         updateUsuario.setCpf(usuario.getCpf());
                         updateUsuario.setEmail(usuario.getEmail());
                         updateUsuario.setDataNascimento(usuario.getDataNascimento());
-                        updateUsuario.setAdm(usuario.getAdm());
+                        updateUsuario.setAdm(usuario.isAdm());
                         novoUsuario.add(updateUsuario);
                     } else {
                         novoUsuario.add(usuario);
@@ -321,7 +316,7 @@ public class UserService {
 
 
             for(UserModel user : allUser)
-                response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.getAdm(), user.getStatus(), user.getDataNascimento(), user.getTurma()));
+                response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.isAdm(), user.getStatus(), user.getDataNascimento(), new TurmaResponseDTO(user.getTurma().getId(), user.getTurma().getNome(), user.getTurma().isParticipandoSorteio(), user.getTurma().getCriadoem())));
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 

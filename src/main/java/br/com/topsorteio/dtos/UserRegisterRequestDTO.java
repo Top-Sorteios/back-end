@@ -1,10 +1,7 @@
 package br.com.topsorteio.dtos;
 
 import br.com.topsorteio.entities.TurmaModel;
-import br.com.topsorteio.entities.UserRole;
-
-import java.util.Date;
 
 public record UserRegisterRequestDTO(String nome, String cpf, String email,
                                      String datanascimento, TurmaModel turma, String status,
-                                     UserRole administrador, int criadopor) {}
+                                     boolean administrador, int criadopor) {}
