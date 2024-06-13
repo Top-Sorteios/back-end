@@ -35,22 +35,24 @@ public class PremioModel {
     @Column(name ="descricao", nullable = false, length = 500)
     private String descricao;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "marcaid", nullable = false)
     private MarcaModel marca;
 
-    @Column(name="criadopor")
-    private Integer criadoPor;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "criadopor", nullable = false)
+    private UserModel criadoPor;
 
     @Column(name="criadoem", nullable=false)
     private Date criadoEm = new Date();
 
-    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca){
+    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca, UserModel user) {
         this.nome = data.nome();
         this.codigoSku = data.codigoSku();
-        this.imagem = data.imagem();
-        this.quantidade = data.quantidade();
         this.descricao = data.descricao();
+        this.quantidade = data.quantidade();
+        this.imagem = data.imagem();
         this.marca = marca;
+        this.criadoPor = user;
     }
 }
