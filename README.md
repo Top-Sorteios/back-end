@@ -25,11 +25,11 @@
 
 | MÉTODO | LINK | PERMISSÃO |
 |-----|------|-----------|
-| POST | localhost:8080/premios/registrar | ADMIN |
-| GET | localhost:8080/premios/obter | ADMIN |
-| GET| localhost:8080/premios/obter/{id} | ADMIN |
-| PUT| localhost:8080/premios/editar/{id} | ADMIN |
-| DELETE | localhost:8080/premios/{id} | ADMIN |
+| POST | https://modulo-sorteios.azurewebsites.net/premios/registrar | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/premios/obter | ADMIN |
+| GET| https://modulo-sorteios.azurewebsites.net/premios/obter/{id} | ADMIN |
+| PUT| https://modulo-sorteios.azurewebsites.net/premios/editar/{id} | ADMIN |
+| DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id} | ADMIN |
 
 
 <b>Formato Requisições</b>
@@ -105,7 +105,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
     "ordemExibicao": int
 }
 ```
-| POST | localhost:8080/premios/registrar
+| POST | https://modulo-sorteios.azurewebsites.net/premios/registrar
 
 ``` console
 {
@@ -119,7 +119,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 }
 ```
 
-| PUT | localhost:8080/premios/editar/{id}
+| PUT | https://modulo-sorteios.azurewebsites.net/premios/editar/{id}
 ``` console
 {
   "nome": string,
