@@ -1,5 +1,6 @@
 package br.com.topsorteio.service;
 
+import br.com.topsorteio.dtos.PremioTotalParticipantesResponseDTO;
 import br.com.topsorteio.dtos.ProcedureParticipandoSorteioResponseDTO;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
@@ -67,7 +68,7 @@ public class PremioService {
 
                 turmaSorteado.get().setParticipandoSorteio(false);
 
-                turmaRepository.save(turmaSorteado.get());
+//                turmaRepository.save(turmaSorteado.get());
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }
@@ -76,5 +77,25 @@ public class PremioService {
         }catch(Exception ex){
             throw new EventInternalServerErrorException(ex.getMessage());
         }
+    }
+
+    public ResponseEntity contarQuantosParticipantes(boolean SorteioSurpresa){
+        int isSorteioSurpresa = 0;
+
+        if(SorteioSurpresa)
+            isSorteioSurpresa = 1;
+
+        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("SP_ObterUsuariosParaSorteio_V2_S");
+        storedProcedure.registerStoredProcedureParameter("SORTEIO_SURPRESA", String.class, ParameterMode.IN);
+        storedProcedure.setParameter("SORTEIO_SURPRESA", isSorteioSurpresa);
+
+
+        storedProcedure.execute();
+
+        List<Object[]> queryResult = storedProcedure.getResultList();
+
+        if(queryResult.isEmpty()) return new ResponseEntity<>("Sem Participantes", HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(new PremioTotalParticipantesResponseDTO(queryResult.stream().count()), HttpStatus.OK);
     }
 }

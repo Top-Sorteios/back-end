@@ -23,4 +23,9 @@ public class PremioController {
     public ResponseEntity premio(){
         return repository.sortearUsuario(false);
     }
+
+    @GetMapping("/total-participantes")
+    public ResponseEntity totalParticipantes(){
+        return repository.contarQuantosParticipantes(false);
+    }
 }
