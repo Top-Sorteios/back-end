@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="tbmarcas")
+@Table(name="tbmarca")
 public class MarcaModel {
 
 	@Id
@@ -34,14 +34,14 @@ public class MarcaModel {
 	@Column(name="banner")
 	private byte[] banner;
 
-	@Column(name="ordem_exibicao", nullable=false)
+	@Column(name="ordemexibicao", nullable=false)
 	private int ordemExibicao;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "criado_por", nullable = false)
+	@JoinColumn(name = "criadopor", nullable = false)
 	private UserModel criadoPor;
 
-	@Column(name="criado_em", nullable=false)
+	@Column(name="criadoem", nullable=false)
 	private Date criadoEm = new Date();
 
 	public MarcaModel(MarcaRegisterRequestDTO data, UserModel user) {

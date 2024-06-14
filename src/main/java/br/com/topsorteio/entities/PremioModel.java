@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="tbpremios")
+@Table(name="tbpremio")
 public class PremioModel {
 
     @Id
