@@ -5,6 +5,7 @@ import java.util.List;
 
 import java.util.Optional;
 
+import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
-import br.com.topsorteio.dtos.MarcaEditRequestDTO;
-import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.entities.MarcaModel;
 import br.com.topsorteio.repositories.IMarcaRepository;
 
@@ -34,15 +32,28 @@ public class MarcaService {
         if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         for(MarcaModel marca : marcas)
-            response.add(new MarcasCadastradasResponseDTO(marca.getNome(), marca.getCriadoPor().getNome(), marca.getCriadoEm()));
+            response.add(new MarcasCadastradasResponseDTO(
+					marca.getId(),
+					marca.getNome(),
+					marca.getCriadoPor().getNome(),
+					marca.getCriadoEm()));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	 public ResponseEntity<Optional<MarcaModel>> obterMarcaPorId(Integer id){
-        Optional<MarcaModel> marca = marcaRepository.findById(id);
-        if(marca.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(marca, HttpStatus.OK);
+	 public ResponseEntity<?> obterMarcaPorId(Integer id){
+        Optional<MarcaModel> marcaOpt = marcaRepository.findById(id);
+        if(marcaOpt.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		MarcaModel marca = marcaOpt.get();
+		MarcaResponseDTO response = new MarcaResponseDTO(
+				marca.getId(),
+				marca.getNome(),
+				marca.getTitulo(),
+				marca.getOrdemExibicao(),
+				marca.getLogo(),
+				marca.getBanner());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 	
 	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) {
@@ -54,22 +65,39 @@ public class MarcaService {
 		MarcaModel marca = new MarcaModel(request, userOpt.get());
 		MarcaModel marcaSalva = marcaRepository.save(marca);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(marcaSalva);
+		MarcaRegisterResponseDTO response = new MarcaRegisterResponseDTO(
+				marcaSalva.getId(),
+				marcaSalva.getNome(),
+				marcaSalva.getTitulo(),
+				marcaSalva.getLogo(),
+				marcaSalva.getBanner(),
+				marcaSalva.getOrdemExibicao(),
+				userOpt.get().getId());
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) {
-		Optional<MarcaModel> marca = marcaRepository.findById(id);
-		if(marca.isEmpty()){
+		Optional<MarcaModel> marcaOpt = marcaRepository.findById(id);
+		if(marcaOpt.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		MarcaModel marcaSalva = marca.get();
-		marcaSalva.setNome(request.nome());
-		marcaSalva.setTitulo(request.titulo());
-		marcaSalva.setLogo(request.logo());
-		marcaSalva.setBanner(request.banner());
-		marcaSalva.setOrdemExibicao(request.ordemExibicao());
-	    marcaRepository.save(marcaSalva);
-	    return new ResponseEntity<>(marcaSalva, HttpStatus.OK);
+		MarcaModel marca = marcaOpt.get();
+		marca.setNome(request.nome());
+		marca.setTitulo(request.titulo());
+		marca.setLogo(request.logo());
+		marca.setBanner(request.banner());
+		marca.setOrdemExibicao(request.ordemExibicao());
+	    marcaRepository.save(marca);
+
+		MarcaEditResponseDTO response = new MarcaEditResponseDTO(
+				marca.getId(),
+				marca.getNome(),
+				marca.getTitulo(),
+				marca.getOrdemExibicao(),
+				marca.getLogo(),
+				marca.getBanner());
+	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> removerMarca(Integer id) {
