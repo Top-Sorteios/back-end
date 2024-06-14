@@ -347,35 +347,7 @@ public class UserService {
     }
 
 
-    public List<ProcedureParticipandoSorteioResponseDTO> getAllPrizeParticipant(boolean SorteioSurpresa){
-        try {
-            int isSorteioSurpresa = 0;
 
-            if(SorteioSurpresa)
-                isSorteioSurpresa = 1;
-
-
-            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("SP_ObterUsuariosParaSorteio_V2_S");
-            storedProcedure.registerStoredProcedureParameter("SORTEIO_SURPRESA", String.class, ParameterMode.IN);
-            storedProcedure.setParameter("SORTEIO_SURPRESA", isSorteioSurpresa);
-
-
-            storedProcedure.execute();
-
-
-            List<ProcedureParticipandoSorteioResponseDTO> teste = new ArrayList<>();
-            List<Object[]> queryResult = storedProcedure.getResultList();
-
-            for (Object[] item : queryResult) {
-                ProcedureParticipandoSorteioResponseDTO dto = new ProcedureParticipandoSorteioResponseDTO((Integer) item[0],(String) (item[1]), (String) (item[2]), (String) (item[3]), (String) (item[4]));
-                teste.add(dto);
-            }
-
-            return teste;
-        }catch(Exception ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
-        }
-    }
 
 
 

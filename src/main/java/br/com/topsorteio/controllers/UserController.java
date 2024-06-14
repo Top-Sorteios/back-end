@@ -24,11 +24,6 @@ public class UserController {
     @Autowired
     private UserService repository;
 
-    @GetMapping("/premio")
-    public ResponseEntity premio(){
-        return ResponseEntity.status(HttpStatus.OK).body(repository.getAllPrizeParticipant(false));
-    }
-
 
     @PostMapping("/importar-usuario/{email}")
     public ResponseEntity importarUsuario(@RequestParam("file") MultipartFile file, @PathVariable String email) {
