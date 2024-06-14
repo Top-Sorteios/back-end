@@ -119,31 +119,36 @@ public class UserService {
                     if (row.getRowNum() == 0) { // Ignorar a linha de cabeçalho
                         continue;
                     }
-                    UserModel usuario = new UserModel();
                     Optional<UserModel> criador = repository.findByEmail(request.email());
 
-
                     if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Email do criador Inválido", false), HttpStatus.BAD_REQUEST);
-
                     if(!criador.get().isAdm()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
+                    UserModel usuario = new UserModel();
 
 
                     String Turma = (String) getCellStringValue(row, 10);
-                    Optional<TurmaModel> turma = turmaRepository.findByNome(Turma);
+                    String Nome = (String) getCellStringValue(row, 5);
+                    String Status = (String) getCellStringValue(row, 11).toLowerCase();
+                    String Email = (String) getCellStringValue(row, 30);
+                    String CPF = (String) getCpfStringValue(row, 15);
+
+                    Optional<TurmaModel> turmaDoBanco = turmaRepository.findByNome(Turma);
 
                     //SetTurma
-                    if(turma.isEmpty()){
+                    if(turmaDoBanco.isEmpty()){
                         TurmaModel criarTurma = new TurmaModel(Turma, true);
                         turmaRepository.save(criarTurma);
                         usuario.setTurma(criarTurma);
                     }else{
-                        usuario.setTurma(turma.get());
+                        usuario.setTurma(turmaDoBanco.get());
                     }
-                    usuario.setNome(getCellStringValue(row, 5));
-                    usuario.setStatus(getCellStringValue(row, 11).toLowerCase());
-                    usuario.setEmail(getCellStringValue(row, 30));
-                    usuario.setCpf(getCpfStringValue(row, 15));
+
+
+                    usuario.setNome(Nome);
+                    usuario.setStatus(Status);
+                    usuario.setEmail(Email);
+                    usuario.setCpf(CPF);
                     usuario.setCriadoPor(criador.get().getId());
 
                     Cell dataNascimentoCell = row.getCell(14);
