@@ -15,11 +15,11 @@
 
 | MÉTODO | LINK | PERMISSÃO |
 |-----|------|-----------|
-| POST | localhost:8080/marcas/registrar | ADMIN |
-| GET | localhost:8080/marcas/obter | ADMIN |
-| GET | localhost:8080/marcas/obter/{id} | ADMIN |
-| PUT | localhost:8080/marcas/editar/{id} | ADMIN |
-| DELETE | localhost:8080/marcas/{id} | ADMIN |
+| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN |
+| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN |
+| DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN |
 
 **PRÊMIOS**
 
@@ -81,7 +81,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 	"email": string 
 }
 ```
-| POST | localhost:8080/marcas/registrar
+| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar
 
 ```console
 {
@@ -94,7 +94,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 }
 ```
 
-| PUT | localhost:8080/marcas/editar/{id}
+| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id}
 
 ``` console
 {
