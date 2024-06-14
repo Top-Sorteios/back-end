@@ -1,13 +1,9 @@
 package br.com.topsorteio.controllers;
 
 import br.com.topsorteio.dtos.*;
-import br.com.topsorteio.entities.SorteioSurpresa;
 import br.com.topsorteio.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +47,7 @@ public class UserController {
 
     @PutMapping
     @RequestMapping("/editar/senha/{email}")
-    public ResponseEntity editarSenha(@PathVariable String email, @RequestBody UserEditRequestDTO request){
+    public ResponseEntity editarSenha(@PathVariable String email, @RequestBody UserEditPasswordRequestDTO request){
         return repository.editarSenha(request, email);
     }
 

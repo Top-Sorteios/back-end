@@ -1,6 +1,5 @@
 package br.com.topsorteio.entities;
 
-import br.com.topsorteio.dtos.UserRegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -63,16 +62,6 @@ public class UserModel implements UserDetails {
     private Date criadoEm = new Date();
 
 
-    public UserModel(UserRegisterRequestDTO data) {
-        this.nome = data.nome();
-        this.cpf = data.cpf();
-        this.email = data.email();;
-        this.dataNascimento = data.datanascimento();
-        this.turma = data.turma();
-        this.status = data.status();
-        this.adm = data.administrador();
-        this.criadoPor = data.criadopor();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

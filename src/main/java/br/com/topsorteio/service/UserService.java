@@ -1,7 +1,6 @@
 package br.com.topsorteio.service;
 
 import br.com.topsorteio.dtos.*;
-import br.com.topsorteio.entities.SorteioSurpresa;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
@@ -10,8 +9,6 @@ import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.ParameterMode;
-import jakarta.persistence.StoredProcedureQuery;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
@@ -25,10 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -73,7 +68,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<HttpStatus> editarSenha(String email, UserEditRequestDTO request){
+    public ResponseEntity<HttpStatus> editarSenha(String email, UserEditPasswordRequestDTO request){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
 
@@ -231,7 +226,7 @@ public class UserService {
 
 
 
-    public ResponseEntity editarSenha(UserEditRequestDTO data, String email){
+    public ResponseEntity editarSenha(UserEditPasswordRequestDTO data, String email){
         try{
             Optional<UserModel> userResponse = this.repository.findByEmail(email);
             if(userResponse.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);

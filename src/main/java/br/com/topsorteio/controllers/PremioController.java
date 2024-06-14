@@ -4,9 +4,9 @@ import br.com.topsorteio.dtos.PremiosCadastradosResponseDTO;
 import br.com.topsorteio.dtos.PremioEditRequestDTO;
 import br.com.topsorteio.dtos.PremioRegisterRequestDTO;
 import br.com.topsorteio.service.PremioService;
-import br.com.topsorteio.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +34,6 @@ public class PremioController {
         return repository.obterPremioPorId(id);
     }
 
-    @GetMapping("/sortear")
-    public ResponseEntity premio(){
-        return repository.sortearUsuario(false);
-    }
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarPremio(@RequestBody PremioRegisterRequestDTO request){
@@ -54,8 +50,4 @@ public class PremioController {
         return repository.removerPremio(id);
     }
 
-    @GetMapping("/total-participantes")
-    public ResponseEntity totalParticipantes(){
-        return repository.contarQuantosParticipantes(false);
-    }
 }
