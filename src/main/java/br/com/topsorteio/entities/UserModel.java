@@ -16,6 +16,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Table(name = "tbusuario")
+@NamedStoredProcedureQuery(
+        name = "SP_ObterUsuariosParaSorteio_V2_S",
+        procedureName = "SP_ObterUsuariosParaSorteio_V2_S",
+        parameters = {
+                @StoredProcedureParameter(name = "SORTEIO_SURPRESA", mode = ParameterMode.IN, type = String.class),
+        }
+)
 public class UserModel implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usuarioid", nullable = false)

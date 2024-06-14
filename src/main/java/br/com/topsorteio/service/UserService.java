@@ -1,6 +1,7 @@
 package br.com.topsorteio.service;
 
 import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.entities.SorteioSurpresa;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
@@ -8,6 +9,9 @@ import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
@@ -21,8 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -38,6 +44,9 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -137,7 +146,7 @@ public class UserService {
                         usuario.setTurma(turma.get());
                     }
                     usuario.setNome(getCellStringValue(row, 5));
-                    usuario.setStatus(getCellStringValue(row, 11));
+                    usuario.setStatus(getCellStringValue(row, 11).toLowerCase());
                     usuario.setEmail(getCellStringValue(row, 30));
                     usuario.setCpf(getCpfStringValue(row, 15));
                     usuario.setCriadoPor(criador.get().getId());
@@ -336,6 +345,38 @@ public class UserService {
         }
 
     }
+
+
+    public List<ProcedureParticipandoSorteioResponseDTO> getAllPrizeParticipant(boolean SorteioSurpresa){
+        try {
+            int isSorteioSurpresa = 0;
+
+            if(SorteioSurpresa)
+                isSorteioSurpresa = 1;
+
+
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("SP_ObterUsuariosParaSorteio_V2_S");
+            storedProcedure.registerStoredProcedureParameter("SORTEIO_SURPRESA", String.class, ParameterMode.IN);
+            storedProcedure.setParameter("SORTEIO_SURPRESA", isSorteioSurpresa);
+
+
+            storedProcedure.execute();
+
+
+            List<ProcedureParticipandoSorteioResponseDTO> teste = new ArrayList<>();
+            List<Object[]> queryResult = storedProcedure.getResultList();
+
+            for (Object[] item : queryResult) {
+                ProcedureParticipandoSorteioResponseDTO dto = new ProcedureParticipandoSorteioResponseDTO((Integer) item[0],(String) (item[1]), (String) (item[2]), (String) (item[3]), (String) (item[4]));
+                teste.add(dto);
+            }
+
+            return teste;
+        }catch(Exception ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+    }
+
 
 
 
