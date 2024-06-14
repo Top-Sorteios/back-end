@@ -17,9 +17,19 @@
 |-----|------|-----------|
 | POST | localhost:8080/marcas/registrar | ADMIN |
 | GET | localhost:8080/marcas/obter | ADMIN |
-| GET| localhost:8080/marcas/obter/{id} | ADMIN |
-| PUT| localhost:8080/marcas/editar/{id} | ADMIN |
+| GET | localhost:8080/marcas/obter/{id} | ADMIN |
+| PUT | localhost:8080/marcas/editar/{id} | ADMIN |
 | DELETE | localhost:8080/marcas/{id} | ADMIN |
+
+**PRÊMIOS**
+
+| MÉTODO | LINK | PERMISSÃO |
+|-----|------|-----------|
+| POST | localhost:8080/premios/registrar | ADMIN |
+| GET | localhost:8080/premios/obter | ADMIN |
+| GET| localhost:8080/premios/obter/{id} | ADMIN |
+| PUT| localhost:8080/premios/editar/{id} | ADMIN |
+| DELETE | localhost:8080/premios/{id} | ADMIN |
 
 
 <b>Formato Requisições</b>
@@ -93,5 +103,30 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
     "logo": null,
     "banner": null,
     "ordemExibicao": int
+}
+```
+| POST | localhost:8080/premios/registrar
+
+``` console
+{
+  "nome": string,
+  "codigoSku": string,
+  "imagem": null, //byte array
+  "quantidade": int,
+  "descricao": string,
+  "marcaId": int,
+  "criadoPor": int
+}
+```
+
+| PUT | localhost:8080/premios/editar/{id}
+``` console
+{
+  "nome": string,
+  "codigoSku": "string,
+  "imagem": null, //byte array
+  "quantidade": int,
+  "descricao": string,
+  "marcaId": int
 }
 ```
