@@ -55,8 +55,9 @@ public class UserModel implements UserDetails {
     @Column(name = "participando_sorteio", nullable = false)
     private boolean participandoSorteio;
 
-    @Column(name = "criadopor", nullable = false)
-    private int criadoPor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "criadopor", nullable = false)
+    private UserModel criadoPor;
 
     @Column(name = "criadoem", nullable = false)
     private Date criadoEm = new Date();

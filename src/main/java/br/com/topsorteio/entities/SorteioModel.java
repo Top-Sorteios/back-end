@@ -17,15 +17,19 @@ public class SorteioModel {
     @Column(name = "sorteioid")
     private Integer id;
 
-    @Column(name = "premioid")
-    private Integer premioid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "premioid")
+    private PremioModel premio;
 
-    @Column(name = "usuarioid")
-    private Integer usuarioid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuarioid")
+    private UserModel usuario;
 
-    @Column(name = "criadopor")
-    private Integer criadopor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "criadopor")
+    private UserModel criadopor;
 
-    @Column(name = "criadorem")
+    @Column(name = "criadoem")
     private Date criadoem = new Date();
+
 }

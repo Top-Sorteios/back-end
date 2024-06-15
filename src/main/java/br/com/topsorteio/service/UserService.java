@@ -144,12 +144,11 @@ public class UserService {
                         usuario.setTurma(turmaDoBanco.get());
                     }
 
-
                     usuario.setNome(Nome);
                     usuario.setStatus(Status);
                     usuario.setEmail(Email);
                     usuario.setCpf(CPF);
-                    usuario.setCriadoPor(criador.get().getId());
+                    usuario.setCriadoPor(criador.get());
 
                     Cell dataNascimentoCell = row.getCell(14);
                     if (dataNascimentoCell != null) {

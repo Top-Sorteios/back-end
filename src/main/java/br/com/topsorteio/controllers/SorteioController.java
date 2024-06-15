@@ -14,8 +14,13 @@ public class SorteioController {
     private SorteioService repository;
 
     @PostMapping("/sortear")
-    public ResponseEntity premio(@RequestBody IsSorteioSurpresaResquestDTO request){
+    public ResponseEntity sortearPremio(@RequestBody IsSorteioSurpresaResquestDTO request){
         return repository.sortearUsuario(request);
+    }
+
+    @GetMapping("/obter")
+    public ResponseEntity obterSorteios(){
+        return repository.obterSorteios();
     }
 
     @PostMapping("/status")

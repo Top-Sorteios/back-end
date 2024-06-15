@@ -1,24 +1,29 @@
 package br.com.topsorteio.service;
 
+import br.com.topsorteio.dtos.ErrorDTO;
 import br.com.topsorteio.dtos.IsSorteioSurpresaResquestDTO;
 import br.com.topsorteio.dtos.PremioTotalParticipantesResponseDTO;
 import br.com.topsorteio.dtos.ProcedureParticipandoSorteioResponseDTO;
+import br.com.topsorteio.entities.PremioModel;
+import br.com.topsorteio.entities.SorteioModel;
 import br.com.topsorteio.entities.TurmaModel;
+import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
+import br.com.topsorteio.exceptions.EventNotFoundException;
+import br.com.topsorteio.repositories.IPremioRepository;
+import br.com.topsorteio.repositories.iSorteioRepository;
 import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 
 @Service
@@ -30,6 +35,11 @@ public class SorteioService {
     @Autowired
     private iUserRepository usuarioRepository;
 
+    @Autowired
+    private IPremioRepository premioRepository;
+
+    @Autowired
+    private iSorteioRepository sorteioRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -57,18 +67,29 @@ public class SorteioService {
                 usuariosParticipantesDTO.add(dto);
             }
 
-
             if (!usuariosParticipantesDTO.isEmpty()) {
+                UserModel emailAdm = usuarioRepository.findByEmail(data.email_administrador()).orElseThrow(() -> new EventNotFoundException("Administrador não existe"));
+                PremioModel premio =  premioRepository.findByCodigoSku(data.codigo_sku()).orElseThrow(() -> new EventNotFoundException("Premio não existe."));
+
                 Random random = new Random();
                 ProcedureParticipandoSorteioResponseDTO sorteado = usuariosParticipantesDTO.get(random.nextInt(usuariosParticipantesDTO.size()));
 
-                Optional<TurmaModel> turmaSorteado = turmaRepository.findByNome(sorteado.turma());
+                TurmaModel turmaSorteado = turmaRepository.findByNome(sorteado.turma()).orElseThrow(() -> new EventNotFoundException("Turma não encontrado."));
+                UserModel ganhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
 
-                if(turmaSorteado.isEmpty()) return new ResponseEntity<>("Turma do Sorteado não Encontrado", HttpStatus.BAD_REQUEST);
+                //Registro do Sorteio
+                SorteioModel sorteio = new SorteioModel();
+                sorteio.setPremio(premio);
+                sorteio.setUsuario(ganhador);
+                sorteio.setCriadopor(emailAdm);
 
-                turmaSorteado.get().setParticipandoSorteio(false);
+                //Remover Premio da Lista
+//                premioRepository.delete(premio);
 
-//                turmaRepository.save(turmaSorteado.get());
+                //Salvar Ganhador
+                sorteioRepository.save(sorteio);
+
+//              turmaRepository.save(turmaSorteado.get());
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }
@@ -97,6 +118,14 @@ public class SorteioService {
         if(queryResult.isEmpty()) return new ResponseEntity<>("Sem Participantes", HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(new PremioTotalParticipantesResponseDTO(queryResult.stream().count()), HttpStatus.OK);
+    }
+
+    public ResponseEntity obterSorteios(){
+        try{
+           return null;
+        }catch(Exception ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
     }
 
 }

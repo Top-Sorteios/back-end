@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -45,6 +46,9 @@ public class PremioModel {
 
     @Column(name="criadoem", nullable=false)
     private Date criadoEm = new Date();
+
+    @OneToMany
+    private List<SorteioModel> sorteios;
 
     public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca, UserModel user) {
         this.nome = data.nome();
