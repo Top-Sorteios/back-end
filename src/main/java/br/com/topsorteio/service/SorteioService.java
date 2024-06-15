@@ -78,18 +78,15 @@ public class SorteioService {
                 UserModel ganhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
 
                 //Registro do Sorteio
-                SorteioModel sorteio = new SorteioModel();
-                sorteio.setPremio(premio);
-                sorteio.setUsuario(ganhador);
-                sorteio.setCriadopor(emailAdm);
+                SorteioModel sorteio = new SorteioModel(premio, ganhador, emailAdm);
+                ganhador.getTurma().setParticipandoSorteio(false);
 
                 //Remover Premio da Lista
 //                premioRepository.delete(premio);
 
                 //Salvar Ganhador
-                sorteioRepository.save(sorteio);
+               sorteioRepository.save(sorteio);
 
-//              turmaRepository.save(turmaSorteado.get());
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }

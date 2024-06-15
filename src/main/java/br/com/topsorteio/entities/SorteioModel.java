@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.util.Date;
 
 @Data
@@ -32,4 +33,9 @@ public class SorteioModel {
     @Column(name = "criadoem")
     private Date criadoem = new Date();
 
+    public SorteioModel(PremioModel premio, UserModel usuario, UserModel criadopor){
+        this.premio = premio;
+        this.usuario = usuario;
+        this.criadopor = criadopor;
+    }
 }
