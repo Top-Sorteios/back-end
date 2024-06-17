@@ -154,10 +154,9 @@ https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio
 ```console
 {
     "sorteio_surpresa": Boolean || 0/1,
-    "email_autenticado": String,
-    "codigo_sku": String //"SKU1230"
 }
 ```
+
 
 
 
