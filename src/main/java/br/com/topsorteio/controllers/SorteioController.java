@@ -1,6 +1,7 @@
 package br.com.topsorteio.controllers;
 
-import br.com.topsorteio.dtos.IsSorteioSurpresaResquestDTO;
+import br.com.topsorteio.dtos.SorteioResquestDTO;
+import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
 import br.com.topsorteio.service.SorteioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,12 @@ public class SorteioController {
     private SorteioService repository;
 
     @PostMapping("/sortear")
-    public ResponseEntity sortearPremio(@RequestBody IsSorteioSurpresaResquestDTO request){
+    public ResponseEntity sortearPremio(@RequestBody SorteioResquestDTO request){
         return repository.sortearUsuario(request);
     }
 
-    @PostMapping("/status")
-    public ResponseEntity statusDoSorteio(@RequestBody IsSorteioSurpresaResquestDTO request){
+    @PostMapping("/participantes-do-sorteio")
+    public ResponseEntity statusDoSorteio(@RequestBody isSorteioSurpresaRequestDTO request){
         return repository.participantesDoSorteio(request);
     }
 

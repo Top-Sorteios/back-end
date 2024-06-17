@@ -1,24 +1,20 @@
 package br.com.topsorteio.service;
 
-import br.com.topsorteio.dtos.ErrorDTO;
-import br.com.topsorteio.dtos.IsSorteioSurpresaResquestDTO;
+import br.com.topsorteio.dtos.SorteioResquestDTO;
 import br.com.topsorteio.dtos.PremioTotalParticipantesResponseDTO;
 import br.com.topsorteio.dtos.ProcedureParticipandoSorteioResponseDTO;
+import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
 import br.com.topsorteio.entities.PremioModel;
 import br.com.topsorteio.entities.SorteioModel;
-import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.repositories.IPremioRepository;
 import br.com.topsorteio.repositories.iSorteioRepository;
-import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
-import org.apache.coyote.Response;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +27,6 @@ import java.util.*;
 public class SorteioService {
 
     @Autowired
-    private iTurmaRepository turmaRepository;
-
-    @Autowired
     private iUserRepository usuarioRepository;
 
     @Autowired
@@ -44,7 +37,7 @@ public class SorteioService {
     @Autowired
     private EntityManager entityManager;
 
-    public ResponseEntity sortearUsuario(IsSorteioSurpresaResquestDTO data){
+    public ResponseEntity sortearUsuario(SorteioResquestDTO data){
         try {
             int isSorteioSurpresa = 0;
 
@@ -97,7 +90,7 @@ public class SorteioService {
         }
     }
 
-    public ResponseEntity participantesDoSorteio(IsSorteioSurpresaResquestDTO data){
+    public ResponseEntity participantesDoSorteio(isSorteioSurpresaRequestDTO data){
         int isSorteioSurpresa = 0;
 
         if(data.sorteio_surpresa())
