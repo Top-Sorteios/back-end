@@ -14,15 +14,16 @@
 
 <b>Formato Requisições</b>
 
-| POST | https://modulo-sorteios.azurewebsites.net/usuarios/importar-usuario/{email} | ADMIN |
+| POST | https://modulo-sorteios.azurewebsites.net/usuarios/importar-usuario | ADMIN |
 
 **Tipo de dado:**
 *form-data*
 
-**Obs:** *Email do caminho é o administrador que está cadastrando os usuarios*
+**Obs:** *Email do "email_autenticado" tem que ser a do ADMINISTRADOR que está cadastrando os usuarios*
 
 ```console
 	file: {arquivo.xlsx}
+	email_autenticado: String
 ```
 
 https://modulo-sorteios.azurewebsites.net/usuarios/primeiro-acesso
@@ -153,16 +154,10 @@ https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio
 ```console
 {
     "sorteio_surpresa": Boolean || 0/1,
-    "email_administrador": String,
+    "email_autenticado": String,
     "codigo_sku": String //"SKU1230"
 }
 ```
 
-https://modulo-sorteios.azurewebsites.net/sorteios/participantes-da-semana
 
-```console
-{
-    "sorteio_surpresa": Boolean || 0/1,
-}
-```
 

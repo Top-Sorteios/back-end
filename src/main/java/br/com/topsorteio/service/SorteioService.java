@@ -62,7 +62,8 @@ public class SorteioService {
             }
 
             if (!usuariosParticipantesDTO.isEmpty()) {
-                UserModel emailAdm = usuarioRepository.findByEmail(data.email_administrador()).orElseThrow(() -> new EventNotFoundException("Administrador não existe"));
+                UserModel emailAdm = usuarioRepository.findByEmail(data.email_autenticado()).orElseThrow(() -> new EventNotFoundException("Administrador não existe"));
+
                 PremioModel premio =  premioRepository.findByCodigoSku(data.codigo_sku()).orElseThrow(() -> new EventNotFoundException("Premio não existe."));
 
                 Random random = new Random();
@@ -113,7 +114,6 @@ public class SorteioService {
     public ResponseEntity obterSorteiosDaSemana(){
         try{
            List<SorteioModel> todosOsSorteios = sorteioRepository.findAll();
-
            return new ResponseEntity<>(todosOsSorteios, HttpStatus.OK);
         }catch(Exception ex){
             throw new EventInternalServerErrorException(ex.getMessage());

@@ -40,8 +40,6 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private EntityManager entityManager;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

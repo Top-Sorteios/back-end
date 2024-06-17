@@ -21,8 +21,8 @@ public class UserController {
     private UserService repository;
 
 
-    @PostMapping("/importar-usuario/{email}")
-    public ResponseEntity importarUsuario(@RequestParam("file") MultipartFile file, @PathVariable String email) {
+    @PostMapping("/importar-usuario")
+    public ResponseEntity importarUsuario(@RequestParam("file") MultipartFile file, @RequestParam("email_autenticado") String email) {
         ImportUsuarioRequestDTO request = new ImportUsuarioRequestDTO(file, email);
         return repository.cadastrarUsuario(request);
     }
