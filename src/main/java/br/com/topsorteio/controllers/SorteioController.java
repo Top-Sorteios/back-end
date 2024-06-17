@@ -18,16 +18,15 @@ public class SorteioController {
         return repository.sortearUsuario(request);
     }
 
-    @GetMapping("/obter")
-    public ResponseEntity obterSorteios(){
-        return repository.obterSorteios();
-    }
-
     @PostMapping("/status")
     public ResponseEntity statusDoSorteio(@RequestBody IsSorteioSurpresaResquestDTO request){
-        return repository.statusDoSorteio(request);
+        return repository.participantesDoSorteio(request);
     }
 
+    @GetMapping("/sorteios-da-semana")
+    public ResponseEntity sorteiosDaSemana(){
+        return repository.obterSorteiosDaSemana();
+    }
 
 
 }

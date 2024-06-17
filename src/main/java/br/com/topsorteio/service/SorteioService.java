@@ -17,6 +17,7 @@ import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
+import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -97,7 +98,7 @@ public class SorteioService {
         }
     }
 
-    public ResponseEntity statusDoSorteio(IsSorteioSurpresaResquestDTO data){
+    public ResponseEntity participantesDoSorteio(IsSorteioSurpresaResquestDTO data){
         int isSorteioSurpresa = 0;
 
         if(data.sorteio_surpresa())
@@ -117,9 +118,11 @@ public class SorteioService {
         return new ResponseEntity<>(new PremioTotalParticipantesResponseDTO(queryResult.stream().count()), HttpStatus.OK);
     }
 
-    public ResponseEntity obterSorteios(){
+    public ResponseEntity obterSorteiosDaSemana(){
         try{
-           return null;
+           List<SorteioModel> todosOsSorteios = sorteioRepository.findAll();
+
+           return new ResponseEntity<>(todosOsSorteios, HttpStatus.OK);
         }catch(Exception ex){
             throw new EventInternalServerErrorException(ex.getMessage());
         }
