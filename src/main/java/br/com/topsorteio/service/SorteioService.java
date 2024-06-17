@@ -75,18 +75,17 @@ public class SorteioService {
                 Random random = new Random();
                 ProcedureParticipandoSorteioResponseDTO sorteado = usuariosParticipantesDTO.get(random.nextInt(usuariosParticipantesDTO.size()));
 
-                TurmaModel turmaSorteado = turmaRepository.findByNome(sorteado.turma()).orElseThrow(() -> new EventNotFoundException("Turma não encontrado."));
                 UserModel ganhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
 
                 //Registro do Sorteio
                 SorteioModel sorteio = new SorteioModel(premio, ganhador, emailAdm);
-                ganhador.getTurma().setParticipandoSorteio(false);
+//                ganhador.getTurma().setParticipandoSorteio(false);
 
                 //Remover Premio da Lista
 //                premioRepository.delete(premio);
 
                 //Salvar Ganhador
-               sorteioRepository.save(sorteio);
+//               sorteioRepository.save(sorteio);
 
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
