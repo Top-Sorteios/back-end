@@ -11,26 +11,6 @@
 | PUT | https://modulo-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
 | GET | https://modulo-sorteios.azurewebsites.net/usuarios/helloworld | X |
 
-**MARCAS**
-
-| MÉTODO | LINK | PERMISSÃO |
-|-----|------|-----------|
-| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN |
-| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN |
-| DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN |
-
-**PRÊMIOS**
-
-| MÉTODO | LINK | PERMISSÃO |
-|-----|------|-----------|
-| POST | https://modulo-sorteios.azurewebsites.net/premios/registrar | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/premios/obter | ADMIN |
-| GET| https://modulo-sorteios.azurewebsites.net/premios/obter/{id} | ADMIN |
-| PUT| https://modulo-sorteios.azurewebsites.net/premios/editar/{id} | ADMIN |
-| DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id} | ADMIN |
-
 
 <b>Formato Requisições</b>
 
@@ -81,6 +61,15 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 	"email": string 
 }
 ```
+**MARCAS**
+
+| MÉTODO | LINK | PERMISSÃO |
+|-----|------|-----------|
+| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN |
+| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN |
+| DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN |
 | POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar
 
 ```console
@@ -104,7 +93,17 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
     "banner": null,
     "ordemExibicao": int
 }
+
 ```
+**PRÊMIOS**
+
+| MÉTODO | LINK | PERMISSÃO |
+|-----|------|-----------|
+| POST | https://modulo-sorteios.azurewebsites.net/premios/registrar | ADMIN |
+| GET | https://modulo-sorteios.azurewebsites.net/premios/obter | ADMIN |
+| GET| https://modulo-sorteios.azurewebsites.net/premios/obter/{id} | ADMIN |
+| PUT| https://modulo-sorteios.azurewebsites.net/premios/editar/{id} | ADMIN |
+| DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id} | ADMIN |
 | POST | https://modulo-sorteios.azurewebsites.net/premios/registrar
 
 ``` console
@@ -129,4 +128,41 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
   "descricao": string,
   "marcaId": int
 }
+
 ```
+**SORTEIOS**
+
+| MÉTODO | LINK | PERMISSÃO |
+|-----|------|-----------|
+| POST | https://modulo-sorteios.azurewebsites.net/premios/sortear | ADMIN |
+| POST | https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio | ADMIN |
+| GET| https://modulo-sorteios.azurewebsites.net/sorteios/sorteios-da-semana | ADMIN |
+
+https://modulo-sorteios.azurewebsites.net/sorteios/sortear
+
+```console
+{
+    "sorteio_surpresa": Boolean || 0/1,
+    "email_administrador": String,
+    "codigo_sku": String //"SKU1230"
+}
+```
+
+https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio
+
+```console
+{
+    "sorteio_surpresa": Boolean || 0/1,
+    "email_administrador": String,
+    "codigo_sku": String //"SKU1230"
+}
+```
+
+https://modulo-sorteios.azurewebsites.net/sorteios/participantes-da-semana
+
+```console
+{
+    "sorteio_surpresa": Boolean || 0/1,
+}
+```
+
