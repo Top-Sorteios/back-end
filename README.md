@@ -107,6 +107,8 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 | DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id} | ADMIN |
 | POST | https://modulo-sorteios.azurewebsites.net/premios/registrar
 
+
+https://modulo-sorteios.azurewebsites.net/premios/registrar
 ``` console
 {
   "nome": string,
@@ -144,7 +146,7 @@ https://modulo-sorteios.azurewebsites.net/sorteios/sortear
 ```console
 {
     "sorteio_surpresa": Boolean || 0/1,
-    "email_administrador": String,
+    "email_autenticado": String,
     "codigo_sku": String //"SKU1230"
 }
 ```
