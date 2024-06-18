@@ -58,12 +58,10 @@ public class PremioService {
         if(premioOpt.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         List<MarcaModel> opcoesMarcas = marcaRepository.findAll();
-        List<String> marcasNomes = new ArrayList<>();
-        List<byte[]> marcasLogos = new ArrayList<>();
+        List<OpcoesMarcasDTO> marcas = new ArrayList<>();
 
         for(MarcaModel marca : opcoesMarcas){
-            marcasNomes.add(marca.getNome());
-            marcasLogos.add(marca.getLogo());
+            marcas.add(new OpcoesMarcasDTO(marca.getNome(), marca.getLogo()));
         }
 
         PremioModel premio = premioOpt.get();
@@ -76,8 +74,7 @@ public class PremioService {
                 premio.getImagem(),
                 premio.getCriadoPor().getNome(),
                 premio.getCriadoEm(),
-                marcasNomes,
-                marcasLogos
+                marcas
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
