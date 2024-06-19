@@ -3,6 +3,7 @@ package br.com.topsorteio.service;
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.infra.email.EmailService;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -131,7 +133,6 @@ public class UserService {
                     String CPF = (String) getCpfStringValue(row, 15);
 
 
-
                     Optional<TurmaModel> turmaDoBanco = turmaRepository.findByNome(Turma);
 
                     //SetTurma
@@ -192,10 +193,10 @@ public class UserService {
             }
             repository.saveAll(novoUsuario);
             return new ResponseEntity<>(new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!"), HttpStatus.CREATED);
-        } catch (IOException e) {
+        }catch (IOException e) {
             throw new EventInternalServerErrorException(e.getMessage());
-        } catch (RuntimeException ex) {
-            throw new EventInternalServerErrorException(ex.getMessage());
+        }catch (RuntimeException ex) {
+            throw new EventBadRequestException(ex.getMessage());
         }
     }
 
@@ -211,8 +212,7 @@ public class UserService {
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
-
-
+//------------------
 
     public ResponseEntity editarSenha(UserEditPasswordRequestDTO data, String email){
         try{
@@ -230,13 +230,15 @@ public class UserService {
 
             return new ResponseEntity<>(HttpStatus.OK);
 
-        }catch (RuntimeException ex){
+        }catch (JpaSystemException ex){
             throw new EventInternalServerErrorException(ex.getMessage());
+        }catch(RuntimeException ex){
+            throw new EventBadRequestException();
         }
 
 
     }
-//------------------
+
 
 
 //    --------------

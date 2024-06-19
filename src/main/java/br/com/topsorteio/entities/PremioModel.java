@@ -4,7 +4,7 @@ import br.com.topsorteio.dtos.PremioRegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+
 
 import java.util.Date;
 import java.util.List;
@@ -46,8 +46,7 @@ public class PremioModel {
     private UserModel criadoPor;
 
     @Column(name="criadoem", nullable=false)
-    @CreatedDate
-    private Date criadoEm;
+    private Date criadoEm = new Date();
 
     @OneToMany
     private List<SorteioModel> sorteios;

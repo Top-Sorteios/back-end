@@ -40,7 +40,7 @@ public class SorteioService {
     @Autowired
     private EntityManager entityManager;
 
-    @Transactional
+    @Transactional(rollbackFor = JpaSystemException.class)
     public ResponseEntity sortearUsuario(SorteioResquestDTO data){
         try {
             int isSorteioSurpresa = 0;
