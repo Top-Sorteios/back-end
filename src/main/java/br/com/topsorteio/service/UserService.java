@@ -47,6 +47,10 @@ public class UserService {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
+    private UserModel validateEmail(String email){
+        return repository.findByEmail(email).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));
+    }
+
     public ResponseEntity<Object> login(LoginRequestDTO data) {
         try {
 
@@ -70,15 +74,12 @@ public class UserService {
 
     public ResponseEntity<HttpStatus> editarSenha(String email, UserEditPasswordRequestDTO request){
         try{
-            Optional<UserModel> userResponse = this.repository.findByEmail(email);
+            UserModel userResponse = validateEmail(email);
 
-            if(userResponse.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-
-            userResponse.get().setSenha(passwordEncoder.encode(request.senha()));
+            userResponse.setSenha(passwordEncoder.encode(request.senha()));
             BeanUtils.copyProperties(request, userResponse);
 
-            repository.save(userResponse.get());
+            repository.save(userResponse);
 
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -91,10 +92,8 @@ public class UserService {
     public ResponseEntity<UserResponseDTO> acharPeloEmail(String email){
         try{
 
-            Optional<UserModel> pegarPeloEmail = repository.findByEmail(email);
-            if(pegarPeloEmail.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            UserModel usuario = validateEmail(email);
 
-            UserModel usuario = pegarPeloEmail.get();
             return new ResponseEntity<>(new UserResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.isAdm(), usuario.getStatus(), usuario.getDataNascimento(), new TurmaResponseDTO(usuario.getTurma().getId(), usuario.getTurma().getNome(), usuario.getTurma().isParticipandoSorteio(), usuario.getTurma().getCriadoem())), HttpStatus.OK);
 
         }catch(JpaSystemException ex){
@@ -119,10 +118,9 @@ public class UserService {
                     if (row.getRowNum() == 0) { // Ignorar a linha de cabeçalho
                         continue;
                     }
-                    Optional<UserModel> criador = repository.findByEmail(request.email());
+                    UserModel criador = validateEmail(request.email());
 
-                    if(criador.isEmpty()) return new ResponseEntity(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Email do criador Inválido", false), HttpStatus.BAD_REQUEST);
-                    if(!criador.get().isAdm()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    if(!criador.isAdm()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
                     UserModel usuario = new UserModel();
 
@@ -148,7 +146,7 @@ public class UserService {
                     usuario.setStatus(Status);
                     usuario.setEmail(Email);
                     usuario.setCpf(CPF);
-                    usuario.setCriadoPor(criador.get());
+                    usuario.setCriadoPor(criador);
 
                     Cell dataNascimentoCell = row.getCell(14);
                     if (dataNascimentoCell != null) {
@@ -244,18 +242,14 @@ public class UserService {
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
-            Optional<UserModel> usuario = repository.findByEmail(data.email());
-
-            if(usuario.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            UserModel usuario = validateEmail(data.email());
 
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
 
             if(usuarioPrimeiroAcesso == null )
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Informações Inválidas ou Primeiro acesso já feito.", false), HttpStatus.BAD_REQUEST);
 
-
             return new ResponseEntity<>(new TokenResponseDTO(data.email(), tokenService.generateToken(usuarioPrimeiroAcesso), true), HttpStatus.OK);
-
         }catch (RuntimeException ex){
             throw new EventInternalServerErrorException(ex.getMessage());
         }
@@ -263,23 +257,19 @@ public class UserService {
     }
     private UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
         try{
-            Optional<UserModel> usuario = this.repository.findByEmail(data.email());
+            UserModel usuario = validateEmail(data.email());
 
-            if(usuario.isEmpty()) return null;
+            if(usuario.getEmail().equals(data.email())
+                    && usuario.getCpf().equals(data.cpf())
+                    && usuario.getDataNascimento().equals(data.datanascimento())
+                    && (usuario.getSenha() == null || usuario.getSenha().isEmpty())){
 
-            UserModel usuarioModel = usuario.get();
+                BeanUtils.copyProperties(data, usuario);
+                usuario.setSenha(passwordEncoder.encode(data.senha()));
 
-            if(usuarioModel.getEmail().equals(data.email())
-                    && usuarioModel.getCpf().equals(data.cpf())
-                    && usuarioModel.getDataNascimento().equals(data.datanascimento())
-                    && (usuarioModel.getSenha() == null || usuarioModel.getSenha().isEmpty())){
+                this.repository.save(usuario);
 
-                BeanUtils.copyProperties(data, usuario.get());
-                usuarioModel.setSenha(passwordEncoder.encode(data.senha()));
-
-                this.repository.save(usuario.get());
-
-                return usuarioModel;
+                return usuario;
             }
 
             return null;
@@ -307,11 +297,9 @@ public class UserService {
         }
     }
 
-    public ResponseEntity esqueciSenha(EsqueciSenhaRequestDTO data){
-        try{
-            Optional<UserModel> usuario = repository.findByEmail(data.email());
-
-            if(usuario.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity esqueciSenha(EsqueciSenhaRequestDTO data) {
+        try {
+            UserModel usuario = validateEmail(data.email());
 
             UUID geradorDeSenha = UUID.randomUUID();
             String[] senha = geradorDeSenha.toString().split("-");
@@ -319,23 +307,15 @@ public class UserService {
             emailService.sendEmail(new EmailSenderDTO(data.email(), "Seila", "Sua senha foi alterada: " + senha[0]));
             String senhaEncriptografada = passwordEncoder.encode(senha[0]);
 
-            usuario.get().setSenha(senhaEncriptografada);
+            usuario.setSenha(senhaEncriptografada);
 
-            repository.save(usuario.get());
+            repository.save(usuario);
 
             return new ResponseEntity<>(new EsqueciSenhaResponseDTO(true), HttpStatus.OK);
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
 
     }
-
-
-
-
-
-
-
-
 }

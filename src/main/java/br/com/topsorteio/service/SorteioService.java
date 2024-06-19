@@ -31,10 +31,8 @@ public class SorteioService {
 
     @Autowired
     private iUserRepository usuarioRepository;
-
     @Autowired
     private IPremioRepository premioRepository;
-
     @Autowired
     private iSorteioRepository sorteioRepository;
     @Autowired
