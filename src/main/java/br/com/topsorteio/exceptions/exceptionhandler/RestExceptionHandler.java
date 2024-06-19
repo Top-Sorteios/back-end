@@ -1,5 +1,6 @@
 package br.com.topsorteio.exceptions.exceptionhandler;
 
+import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.exceptions.EventTimeOutException;
@@ -27,6 +28,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<RestErrorMensagem> eventNotFoundHandler(EventNotFoundException exception){
         RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.NOT_FOUND, 404, exception.getMessage(), false );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
+    }
+
+    @ExceptionHandler(EventBadRequestException.class)
+    private ResponseEntity<RestErrorMensagem> eventBadRequestHandler(EventBadRequestException exception){
+        RestErrorMensagem threatResponse = new RestErrorMensagem(HttpStatus.BAD_REQUEST, 400, exception.getMessage(), false );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
     }
 
 }

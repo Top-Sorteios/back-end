@@ -4,6 +4,7 @@ import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
+import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iTurmaRepository;
@@ -48,6 +49,7 @@ public class UserService {
         try {
 
             Optional<UserModel> userOptional = repository.findByEmail(data.email());
+
             if (userOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             UserModel userData = userOptional.get();
@@ -55,12 +57,10 @@ public class UserService {
             if (userData.getSenha() == null || userData.getSenha().isEmpty())
                 return new ResponseEntity<>(new ErrorDTO(HttpStatus.BAD_REQUEST, 400, "Realize o primeiro acesso.", false), HttpStatus.BAD_REQUEST);
 
-
             if (userData.getEmail().equals(data.email()) && passwordEncoder.matches(data.senha(), userData.getPassword()))
                 return new ResponseEntity<>(new TokenResponseDTO(userData.getEmail(), tokenService.generateToken(userData), true), HttpStatus.OK);
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         } catch (RuntimeException ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
@@ -124,12 +124,13 @@ public class UserService {
 
                     UserModel usuario = new UserModel();
 
-
                     String Turma = (String) getCellStringValue(row, 10);
                     String Nome = (String) getCellStringValue(row, 5);
                     String Status = (String) getCellStringValue(row, 11).toLowerCase();
                     String Email = (String) getCellStringValue(row, 30);
                     String CPF = (String) getCpfStringValue(row, 15);
+
+
 
                     Optional<TurmaModel> turmaDoBanco = turmaRepository.findByNome(Turma);
 
@@ -165,13 +166,10 @@ public class UserService {
 
                     try{
                         int userRoleInt = (int) getCellNumericValue(row, 77);
-
                         usuario.setAdm(userRoleInt == 1);
                     }catch(Exception ex){
                         usuario.setAdm(false);
                     }
-
-
 
                     usuario.setParticipandoSorteio(false);
 
@@ -193,24 +191,12 @@ public class UserService {
                 }
             }
             repository.saveAll(novoUsuario);
-            ImportUsuarioResponseDTO response = new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!");
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return new ResponseEntity<>(new ImportUsuarioResponseDTO(HttpStatus.CREATED, "Usuários importados com sucesso!"), HttpStatus.CREATED);
         } catch (IOException e) {
             throw new EventInternalServerErrorException(e.getMessage());
         } catch (RuntimeException ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
-    }
-
-    private TurmaModel createTurma(CreateTurmaRequestDTO request){
-        TurmaModel turma = new TurmaModel();
-
-        turma.setNome(request.nome());
-        turma.setParticipandoSorteio(request.participandoSorteio());
-        BeanUtils.copyProperties(request, turma);
-        turmaRepository.save(turma);
-
-        return turma;
     }
 
     private String getCellStringValue(Row row, int cellIndex) {
