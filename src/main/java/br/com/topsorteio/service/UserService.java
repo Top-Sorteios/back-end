@@ -10,7 +10,6 @@ import br.com.topsorteio.infra.email.EmailService;
 import br.com.topsorteio.infra.security.TokenService;
 import br.com.topsorteio.repositories.iTurmaRepository;
 import br.com.topsorteio.repositories.iUserRepository;
-import jakarta.persistence.EntityManager;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -72,21 +70,6 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<HttpStatus> editarSenha(String email, UserEditPasswordRequestDTO request){
-        try{
-            UserModel userResponse = validateEmail(email);
-
-            userResponse.setSenha(passwordEncoder.encode(request.senha()));
-            BeanUtils.copyProperties(request, userResponse);
-
-            repository.save(userResponse);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-
-        }catch (RuntimeException ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
-        }
-    }
     public Optional<UserModel> findByEmail(String email){return repository.findByEmail(email);}
 
     public ResponseEntity<UserResponseDTO> acharPeloEmail(String email){
@@ -214,17 +197,15 @@ public class UserService {
 
     public ResponseEntity editarSenha(UserEditPasswordRequestDTO data, String email){
         try{
-            Optional<UserModel> userResponse = this.repository.findByEmail(email);
-            if(userResponse.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            UserModel userResponse = validateEmail(email);
 
-
-            if(!(passwordEncoder.matches(data.senhaAtual(), userResponse.get().getSenha()) && email.equals(userResponse.get().getEmail())))
+            if(!(passwordEncoder.matches(data.senhaAtual(), userResponse.getSenha()) && email.equals(userResponse.getEmail())))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            userResponse.get().setSenha(passwordEncoder.encode(data.senha()));
+            userResponse.setSenha(passwordEncoder.encode(data.senha()));
             BeanUtils.copyProperties(data, userResponse);
 
-            repository.save(userResponse.get());
+            repository.save(userResponse);
 
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -242,8 +223,6 @@ public class UserService {
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
-            UserModel usuario = validateEmail(data.email());
-
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);
 
             if(usuarioPrimeiroAcesso == null )
@@ -291,7 +270,6 @@ public class UserService {
                 response.add(new UserResponseDTO(user.getNome(), user.getEmail(), user.getCpf(), user.isAdm(), user.getStatus(), user.getDataNascimento(), new TurmaResponseDTO(user.getTurma().getId(), user.getTurma().getNome(), user.getTurma().isParticipandoSorteio(), user.getTurma().getCriadoem())));
 
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         }catch(RuntimeException ex){
             throw new EventInternalServerErrorException();
         }

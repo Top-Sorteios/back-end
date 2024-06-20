@@ -53,7 +53,7 @@ public class UserController {
 
     @PutMapping
     @RequestMapping("/primeiro-acesso")
-    public ResponseEntity editarSenha(@RequestBody FirstAcessRequestDTO data){
+    public ResponseEntity primeiroAcesso(@RequestBody FirstAcessRequestDTO data){
        return repository.primeiroAcesso(data);
     }
 

@@ -2,7 +2,6 @@ package br.com.topsorteio.controllers;
 
 import java.util.List;
 
-import br.com.topsorteio.service.SorteioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
