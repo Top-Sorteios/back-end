@@ -46,7 +46,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/login
 }
 ```
 
-https://modulo-sorteios.azurewebsites.net/usuarios/senha/{email}
+https://modulo-sorteios.azurewebsites.net/editar/senha/{email}
 
 ```console
 {
