@@ -25,20 +25,34 @@ public class MarcaService {
 	@Autowired
 	private iUserRepository userRepository;
 	
-	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
+	public ResponseEntity<List<MarcasResponseDTO>> obterTodasAsMarcasHome(){
 		List<MarcaModel> marcas = marcaRepository.findAll();
-        List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
+        List<MarcasResponseDTO> response = new ArrayList<>();
 
         if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         for(MarcaModel marca : marcas)
-            response.add(new MarcasCadastradasResponseDTO(
+            response.add(new MarcasResponseDTO(
+					marca.getNome(),
+					marca.getLogo()));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
+		List<MarcaModel> marcas = marcaRepository.findAll();
+		List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
+
+		if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		for(MarcaModel marca : marcas)
+			response.add(new MarcasCadastradasResponseDTO(
 					marca.getId(),
 					marca.getNome(),
 					marca.getCriadoPor().getNome(),
 					marca.getCriadoEm()));
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	 public ResponseEntity<?> obterMarcaPorId(Integer id){
