@@ -44,4 +44,9 @@ public class MarcaController {
 	public ResponseEntity<?> removerMarca(@PathVariable Integer id){
 		return repository.removerMarca(id);
 	}
+
+	@GetMapping("/vitrine")
+	public ResponseEntity<?> obterMarcasParaVitrine(){
+		return repository.obterMarcasParaVitrine();
+	}
 }
