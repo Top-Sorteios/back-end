@@ -35,7 +35,6 @@ public class PremioController {
         return repository.obterPremioPorId(id);
     }
 
-
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarPremio(@ModelAttribute PremioRegisterRequestDTO request) throws IOException {
         return repository.registrarPremio(request);
