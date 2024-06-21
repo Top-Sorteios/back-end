@@ -71,7 +71,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 | GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN |
 | PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN |
 | DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN |
-| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/vitrine | USER |
 
 ```console
 {
