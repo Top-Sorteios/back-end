@@ -45,7 +45,15 @@ public class PremioService {
         if(premios.isEmpty()){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
 
         for(PremioModel premio : premios){
-            response.add(new PremiosCadastradosResponseDTO(premio.getId(), premio.getNome(), premio.getMarca().getNome(), premio.getCriadoPor().getNome(), premio.getCriadoEm()));
+            response.add(new PremiosCadastradosResponseDTO(
+                    premio.getId(),
+                    premio.getNome(),
+                    premio.getCodigoSku(),
+                    premio.getDescricao(),
+                    premio.getImagem(),
+                    premio.getMarca().getNome(),
+                    premio.getCriadoPor().getNome(),
+                    premio.getCriadoEm()));
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

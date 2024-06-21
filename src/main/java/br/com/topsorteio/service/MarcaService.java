@@ -30,20 +30,6 @@ public class MarcaService {
 
 	@Autowired
 	private IPremioRepository premioRepository;
-	
-	public ResponseEntity<List<MarcasResponseDTO>> obterTodasAsMarcasHome(){
-		List<MarcaModel> marcas = marcaRepository.findAll();
-        List<MarcasResponseDTO> response = new ArrayList<>();
-
-        if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        for(MarcaModel marca : marcas)
-            response.add(new MarcasResponseDTO(
-					marca.getNome(),
-					marca.getLogo()));
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-	}
 
 	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
 		List<MarcaModel> marcas = marcaRepository.findAll();
@@ -55,6 +41,10 @@ public class MarcaService {
 			response.add(new MarcasCadastradasResponseDTO(
 					marca.getId(),
 					marca.getNome(),
+					marca.getTitulo(),
+					marca.getLogo(),
+					marca.getBanner(),
+					marca.getOrdemExibicao(),
 					marca.getCriadoPor().getNome(),
 					marca.getCriadoEm()));
 
