@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.entities.PremioModel;
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.repositories.IPremioRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,9 @@ public class MarcaService {
 
 	@Autowired
 	private iUserRepository userRepository;
+
+	@Autowired
+	private IPremioRepository premioRepository;
 	
 	public ResponseEntity<List<MarcasResponseDTO>> obterTodasAsMarcasHome(){
 		List<MarcaModel> marcas = marcaRepository.findAll();
@@ -124,5 +129,19 @@ public class MarcaService {
 		}
 		marcaRepository.deleteById(id);
 		return new ResponseEntity<>("Marca de ID " + id + " removida com sucesso.", HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> obterMarcasParaVitrine() {
+		List<PremioModel> premios = premioRepository.findAll();
+		List<MarcasVitrineResponseDTO> response = new ArrayList<>();
+		for(PremioModel premio : premios){
+			response.add(new MarcasVitrineResponseDTO(
+					premio.getMarca().getNome(),
+					premio.getMarca().getTitulo(),
+					premio.getDescricao(),
+					premio.getMarca().getLogo()
+			));
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
