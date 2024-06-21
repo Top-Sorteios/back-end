@@ -1,4 +1,6 @@
 package br.com.topsorteio.dtos;
 
-public record PremioRegisterRequestDTO(String nome, String codigoSku, String descricao, int quantidade, byte[] imagem,  Integer marcaId, Integer criadoPor) {
+import org.springframework.web.multipart.MultipartFile;
+
+public record PremioRegisterRequestDTO(String nome, String codigoSku, String descricao, int quantidade, MultipartFile imagem, Integer marcaId, Integer criadoPor) {
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class PremioService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> registrarPremio(PremioRegisterRequestDTO request) {
+    public ResponseEntity<?> registrarPremio(PremioRegisterRequestDTO request) throws IOException {
         Optional<PremioModel> premioOpt = premioRepository.findByCodigoSku(request.codigoSku());
         if (premioOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -111,7 +112,7 @@ public class PremioService {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    public ResponseEntity<?> editarPremio(Integer id, PremioEditRequestDTO request){
+    public ResponseEntity<?> editarPremio(Integer id, PremioEditRequestDTO request) throws IOException{
         Optional<PremioModel> premioOpt = premioRepository.findById(id);
         if (premioOpt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -133,7 +134,7 @@ public class PremioService {
 
         premio.setNome(request.nome());
         premio.setCodigoSku(request.codigoSku());
-        premio.setImagem(request.imagem());
+        premio.setImagem(request.imagem().getBytes());
         premio.setQuantidade(request.quantidade());
         premio.setDescricao(request.descricao());
         premio.setMarca(marcaOpt.get());

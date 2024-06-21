@@ -1,5 +1,6 @@
 package br.com.topsorteio.entities;
 
+import java.io.IOException;
 import java.util.Date;
 
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
@@ -44,11 +45,11 @@ public class MarcaModel {
 	@Column(name="criadoem", nullable=false)
 	private Date criadoEm = new Date();
 
-	public MarcaModel(MarcaRegisterRequestDTO data, UserModel user) {
+	public MarcaModel(MarcaRegisterRequestDTO data, UserModel user) throws IOException {
 		this.nome = data.nome();
 		this.titulo = data.titulo();
-		this.logo = data.logo();
-		this.banner = data.banner();
+		this.logo = data.logo().getBytes();
+		this.banner = data.banner().getBytes();
 		this.ordemExibicao = data.ordemExibicao();
 		this.criadoPor = user;
 	}

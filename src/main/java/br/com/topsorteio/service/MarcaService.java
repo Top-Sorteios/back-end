@@ -1,5 +1,6 @@
 package br.com.topsorteio.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,28 +71,29 @@ public class MarcaService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 	
-	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) {
+	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) throws IOException {
 		Optional<UserModel> userOpt = userRepository.findById(request.criadoPor());
 		if (userOpt.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
 		MarcaModel marca = new MarcaModel(request, userOpt.get());
-		MarcaModel marcaSalva = marcaRepository.save(marca);
+
+		marcaRepository.save(marca);
 
 		MarcaRegisterResponseDTO response = new MarcaRegisterResponseDTO(
-				marcaSalva.getId(),
-				marcaSalva.getNome(),
-				marcaSalva.getTitulo(),
-				marcaSalva.getLogo(),
-				marcaSalva.getBanner(),
-				marcaSalva.getOrdemExibicao(),
+				marca.getId(),
+				marca.getNome(),
+				marca.getTitulo(),
+				marca.getLogo(),
+				marca.getBanner(),
+				marca.getOrdemExibicao(),
 				userOpt.get().getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) {
+	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) throws IOException {
 		Optional<MarcaModel> marcaOpt = marcaRepository.findById(id);
 		if(marcaOpt.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -99,9 +101,10 @@ public class MarcaService {
 		MarcaModel marca = marcaOpt.get();
 		marca.setNome(request.nome());
 		marca.setTitulo(request.titulo());
-		marca.setLogo(request.logo());
-		marca.setBanner(request.banner());
+		marca.setLogo(request.logo().getBytes());
+		marca.setBanner(request.banner().getBytes());
 		marca.setOrdemExibicao(request.ordemExibicao());
+
 	    marcaRepository.save(marca);
 
 		MarcaEditResponseDTO response = new MarcaEditResponseDTO(

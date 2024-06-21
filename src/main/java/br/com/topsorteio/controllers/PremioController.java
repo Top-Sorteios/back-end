@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,12 +37,12 @@ public class PremioController {
 
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrarPremio(@RequestBody PremioRegisterRequestDTO request){
+    public ResponseEntity<?> registrarPremio(@ModelAttribute PremioRegisterRequestDTO request) throws IOException {
         return repository.registrarPremio(request);
     }
 
     @PutMapping("/editar/{id}")
-    public ResponseEntity<?> editarPremio(@PathVariable Integer id, @RequestBody PremioEditRequestDTO request){
+    public ResponseEntity<?> editarPremio(@PathVariable Integer id, @ModelAttribute PremioEditRequestDTO request) throws IOException{
         return repository.editarPremio(id, request);
     }
 

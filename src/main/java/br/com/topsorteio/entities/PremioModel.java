@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -51,12 +52,12 @@ public class PremioModel {
     @OneToMany
     private List<SorteioModel> sorteios;
 
-    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca, UserModel user) {
+    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca, UserModel user) throws IOException {
         this.nome = data.nome();
         this.codigoSku = data.codigoSku();
         this.descricao = data.descricao();
         this.quantidade = data.quantidade();
-        this.imagem = data.imagem();
+        this.imagem = data.imagem().getBytes();
         this.marca = marca;
         this.criadoPor = user;
     }
