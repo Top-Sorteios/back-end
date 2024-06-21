@@ -67,14 +67,14 @@ public class SorteioService {
                 Random random = new Random();
                 ProcedureParticipandoSorteioResponseDTO sorteado = usuariosParticipantesDTO.get(random.nextInt(usuariosParticipantesDTO.size()));
 
-                UserModel ganhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
+                UserModel usuarioGanhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
 
                 PremioModel premio = validateSorteio(data);
 
                 premio.subtrair(1);
 
                 //Registro do Sorteio
-                SorteioModel sorteio = new SorteioModel(premio, ganhador, emailAdm);
+                SorteioModel sorteio = new SorteioModel(premio, usuarioGanhador, usuarioGanhador.getTurma(),emailAdm, data.sorteio_surpresa());
 //                ganhador.getTurma().setParticipandoSorteio(false);
 
                 //Salvar Ganhador
@@ -83,7 +83,6 @@ public class SorteioService {
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }
-
             return new ResponseEntity<>("Ninguem participando do Sorteio", HttpStatus.BAD_REQUEST);
         }catch(JpaSystemException ex){
             throw new EventInternalServerErrorException("Algo de inesperado.");
