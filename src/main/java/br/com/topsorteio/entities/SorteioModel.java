@@ -16,7 +16,7 @@ import java.util.Date;
 public class SorteioModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sorteioid")
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "premioid")
@@ -27,15 +27,24 @@ public class SorteioModel {
     private UserModel usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "turmaid")
+    private TurmaModel turma;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "criadopor")
     private UserModel criadopor;
+
+    @Column(name = "premio_surpresa")
+    private boolean premioSurpresa;
 
     @Column(name = "criadoem")
     private Date criadoem = new Date();
 
-    public SorteioModel(PremioModel premio, UserModel usuario, UserModel criadopor){
+    public SorteioModel(PremioModel premio, UserModel usuario, TurmaModel turma, UserModel criadopor, boolean premioSurpresa){
         this.premio = premio;
         this.usuario = usuario;
+        this.turma = turma;
         this.criadopor = criadopor;
+        this.premioSurpresa = premioSurpresa;
     }
 }
