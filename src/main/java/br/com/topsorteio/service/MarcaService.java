@@ -33,10 +33,9 @@ public class MarcaService {
 
 	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
 		List<MarcaModel> marcas = marcaRepository.findAll();
-		List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
-
 		if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+		List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
 		for(MarcaModel marca : marcas)
 			response.add(new MarcasCadastradasResponseDTO(
 					marca.getId(),
@@ -47,7 +46,6 @@ public class MarcaService {
 					marca.getOrdemExibicao(),
 					marca.getCriadoPor().getNome(),
 					marca.getCriadoEm()));
-
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
@@ -68,24 +66,12 @@ public class MarcaService {
 	
 	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) throws IOException {
 		Optional<UserModel> userOpt = userRepository.findById(request.criadoPor());
-		if (userOpt.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		if (userOpt.isEmpty()) {return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
 
 		MarcaModel marca = new MarcaModel(request, userOpt.get());
-
 		marcaRepository.save(marca);
 
-		MarcaRegisterResponseDTO response = new MarcaRegisterResponseDTO(
-				marca.getId(),
-				marca.getNome(),
-				marca.getTitulo(),
-				marca.getLogo(),
-				marca.getBanner(),
-				marca.getOrdemExibicao(),
-				userOpt.get().getId());
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		return new ResponseEntity<>("Marca registrada com sucesso.", HttpStatus.CREATED);
 	}
 	
 	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) throws IOException {
@@ -93,6 +79,7 @@ public class MarcaService {
 		if(marcaOpt.isEmpty()){
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+
 		MarcaModel marca = marcaOpt.get();
 		marca.setNome(request.nome());
 		marca.setTitulo(request.titulo());
@@ -102,14 +89,7 @@ public class MarcaService {
 
 	    marcaRepository.save(marca);
 
-		MarcaEditResponseDTO response = new MarcaEditResponseDTO(
-				marca.getId(),
-				marca.getNome(),
-				marca.getTitulo(),
-				marca.getOrdemExibicao(),
-				marca.getLogo(),
-				marca.getBanner());
-	    return new ResponseEntity<>(response, HttpStatus.OK);
+	    return new ResponseEntity<>("Marca editada com sucesso.", HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> removerMarca(Integer id) {
@@ -118,7 +98,7 @@ public class MarcaService {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		marcaRepository.deleteById(id);
-		return new ResponseEntity<>("Marca de ID " + id + " removida com sucesso.", HttpStatus.OK);
+		return new ResponseEntity<>("Marca removida com sucesso.", HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> obterMarcasParaVitrine() {

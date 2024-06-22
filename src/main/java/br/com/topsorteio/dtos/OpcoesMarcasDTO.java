@@ -1,4 +1,4 @@
 package br.com.topsorteio.dtos;
 
-public record OpcoesMarcasDTO(String nome, byte[] logo) {
+public record OpcoesMarcasDTO(Integer id, String nome, byte[] logo) {
 }
