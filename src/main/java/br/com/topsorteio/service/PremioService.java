@@ -144,6 +144,6 @@ public class PremioService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         premioRepository.deleteById(id);
-        return new ResponseEntity<>("Prêmio de ID removido com sucesso.", HttpStatus.OK);
+        return new ResponseEntity<>("Prêmio removido com sucesso.", HttpStatus.OK);
     }
 }
