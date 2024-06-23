@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,6 +29,9 @@ public class PremioService {
 
     @Autowired
     private IMarcaRepository marcaRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private EntityManager entityManager;
@@ -92,17 +96,13 @@ public class PremioService {
                     .body(new ErrorDTO(HttpStatus.CONFLICT, 409, "Código SKU já existe.", false));
         }
 
-        Optional<UserModel> userOpt = userRepository.findById(request.criadoPor());
-        if (userOpt.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
         Optional<MarcaModel> marcaOpt = marcaRepository.findById(request.marcaId());
         if (marcaOpt.isEmpty()) {
             return new ResponseEntity<>("Marca não encontrada", HttpStatus.NOT_FOUND);
         }
-
-        PremioModel premio = new PremioModel(request, marcaOpt.get(), userOpt.get());
+        PremioModel premio = new PremioModel(request, marcaOpt.get());
+        UserModel user = userService.getAuthenticatedUser();
+        premio.setCriadoPor(user);
         premioRepository.save(premio);
 
         return new ResponseEntity<>("Prêmio registrado com sucesso.", HttpStatus.CREATED);

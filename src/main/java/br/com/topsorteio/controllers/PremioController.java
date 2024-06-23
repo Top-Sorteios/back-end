@@ -3,11 +3,14 @@ package br.com.topsorteio.controllers;
 import br.com.topsorteio.dtos.PremiosCadastradosResponseDTO;
 import br.com.topsorteio.dtos.PremioEditRequestDTO;
 import br.com.topsorteio.dtos.PremioRegisterRequestDTO;
+import br.com.topsorteio.entities.UserModel;
 import br.com.topsorteio.service.PremioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

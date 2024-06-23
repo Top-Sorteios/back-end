@@ -14,6 +14,8 @@ import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.com.topsorteio.entities.MarcaModel;
@@ -30,6 +32,9 @@ public class MarcaService {
 
 	@Autowired
 	private IPremioRepository premioRepository;
+
+	@Autowired
+	private UserService userService;
 
 	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
 		List<MarcaModel> marcas = marcaRepository.findAll();
@@ -65,12 +70,10 @@ public class MarcaService {
     }
 	
 	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) throws IOException {
-		Optional<UserModel> userOpt = userRepository.findById(request.criadoPor());
-		if (userOpt.isEmpty()) {return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-
-		MarcaModel marca = new MarcaModel(request, userOpt.get());
+		MarcaModel marca = new MarcaModel(request);
+		UserModel user = userService.getAuthenticatedUser();
+		marca.setCriadoPor(user);
 		marcaRepository.save(marca);
-
 		return new ResponseEntity<>("Marca registrada com sucesso.", HttpStatus.CREATED);
 	}
 	
@@ -114,4 +117,6 @@ public class MarcaService {
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+
 }

@@ -52,14 +52,13 @@ public class PremioModel {
     @OneToMany
     private List<SorteioModel> sorteios;
 
-    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca, UserModel user) throws IOException {
+    public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca) throws IOException {
         this.nome = data.nome();
         this.codigoSku = data.codigoSku();
         this.descricao = data.descricao();
         this.quantidade = data.quantidade();
         this.imagem = data.imagem().getBytes();
         this.marca = marca;
-        this.criadoPor = user;
     }
 
     public void subtrair(int numeroDeItens){

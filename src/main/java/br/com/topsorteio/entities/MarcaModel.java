@@ -45,12 +45,11 @@ public class MarcaModel {
 	@Column(name="criadoem", nullable=false)
 	private Date criadoEm = new Date();
 
-	public MarcaModel(MarcaRegisterRequestDTO data, UserModel user) throws IOException {
+	public MarcaModel(MarcaRegisterRequestDTO data) throws IOException {
 		this.nome = data.nome();
 		this.titulo = data.titulo();
 		this.logo = data.logo().getBytes();
 		this.banner = data.banner().getBytes();
 		this.ordemExibicao = data.ordemExibicao();
-		this.criadoPor = user;
 	}
 }
