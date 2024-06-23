@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Optional;
 
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.PremioModel;
 import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.exceptions.EventBadRequestException;
+import br.com.topsorteio.exceptions.EventInternalServerErrorException;
+import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.repositories.IPremioRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import br.com.topsorteio.entities.MarcaModel;
@@ -36,85 +39,99 @@ public class MarcaService {
 	private UserService userService;
 
 	public ResponseEntity<List<MarcasCadastradasResponseDTO>> obterTodasAsMarcas(){
-		List<MarcaModel> marcas = marcaRepository.findAll();
-		if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		try {
+			List<MarcaModel> marcas = marcaRepository.findAll();
+			if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
-		for(MarcaModel marca : marcas)
-			response.add(new MarcasCadastradasResponseDTO(
-					marca.getId(),
-					marca.getNome(),
-					marca.getTitulo(),
-					marca.getLogo(),
-					marca.getBanner(),
-					marca.getOrdemExibicao(),
-					marca.getCriadoPor().getNome(),
-					marca.getCriadoEm()));
-		return new ResponseEntity<>(response, HttpStatus.OK);
+			List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
+			for(MarcaModel marca : marcas)
+				response.add(new MarcasCadastradasResponseDTO(
+						marca.getId(),
+						marca.getNome(),
+						marca.getTitulo(),
+						marca.getLogo(),
+						marca.getBanner(),
+						marca.getOrdemExibicao(),
+						marca.getCriadoPor().getNome(),
+						marca.getCriadoEm()));
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (RuntimeException e) {
+			throw new EventInternalServerErrorException(e.getMessage());
+		}
 	}
 	
 	 public ResponseEntity<?> obterMarcaPorId(Integer id){
-        Optional<MarcaModel> marcaOpt = marcaRepository.findById(id);
-        if(marcaOpt.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		 try {
+			 MarcaModel marca = marcaRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Marca com ID " + id + " não encontrada."));
 
-		MarcaModel marca = marcaOpt.get();
-		MarcaResponseDTO response = new MarcaResponseDTO(
-				marca.getId(),
-				marca.getNome(),
-				marca.getTitulo(),
-				marca.getOrdemExibicao(),
-				marca.getLogo(),
-				marca.getBanner());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+			 MarcaResponseDTO response = new MarcaResponseDTO(
+					 marca.getId(),
+					 marca.getNome(),
+					 marca.getTitulo(),
+					 marca.getOrdemExibicao(),
+					 marca.getLogo(),
+					 marca.getBanner());
+			 return new ResponseEntity<>(response, HttpStatus.OK);
+		 } catch (JpaSystemException e) {
+			 throw new EventInternalServerErrorException(e.getMessage());
+		 }
+	 }
 	
-	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request) throws IOException {
-		MarcaModel marca = new MarcaModel(request);
-		UserModel user = userService.getAuthenticatedUser();
-		marca.setCriadoPor(user);
-		marcaRepository.save(marca);
-		return new ResponseEntity<>("Marca registrada com sucesso.", HttpStatus.CREATED);
+	public ResponseEntity<?> registrarMarca(MarcaRegisterRequestDTO request){
+		try {
+			MarcaModel marca = new MarcaModel(request);
+			UserModel user = userService.getAuthenticatedUser();
+			marca.setCriadoPor(user);
+			marcaRepository.save(marca);
+			return new ResponseEntity<>("Marca registrada com sucesso.", HttpStatus.CREATED);
+		} catch (IOException e) {
+			throw new EventInternalServerErrorException(e.getMessage());
+		}
 	}
 	
-	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) throws IOException {
-		Optional<MarcaModel> marcaOpt = marcaRepository.findById(id);
-		if(marcaOpt.isEmpty()){
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> editarMarca(Integer id, MarcaEditRequestDTO request) {
+		try {
+			MarcaModel marca = marcaRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Marca com ID " + id + " não encontrada."));
+
+			marca.setNome(request.nome());
+			marca.setTitulo(request.titulo());
+			marca.setLogo(request.logo().getBytes());
+			marca.setBanner(request.banner().getBytes());
+			marca.setOrdemExibicao(request.ordemExibicao());
+
+			marcaRepository.save(marca);
+
+			return new ResponseEntity<>("Marca editada com sucesso.", HttpStatus.OK);
+		} catch (IOException e) {
+			throw new EventInternalServerErrorException(e.getMessage());
 		}
-
-		MarcaModel marca = marcaOpt.get();
-		marca.setNome(request.nome());
-		marca.setTitulo(request.titulo());
-		marca.setLogo(request.logo().getBytes());
-		marca.setBanner(request.banner().getBytes());
-		marca.setOrdemExibicao(request.ordemExibicao());
-
-	    marcaRepository.save(marca);
-
-	    return new ResponseEntity<>("Marca editada com sucesso.", HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> removerMarca(Integer id) {
-		Optional<MarcaModel> marca = marcaRepository.findById(id);
-		if(marca.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		try {
+			marcaRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Marca com ID " + id + " não encontrada."));
+			marcaRepository.deleteById(id);
+			return new ResponseEntity<>("Marca removida com sucesso.", HttpStatus.OK);
+		} catch (JpaSystemException e) {
+			throw new EventInternalServerErrorException(e.getMessage());
 		}
-		marcaRepository.deleteById(id);
-		return new ResponseEntity<>("Marca removida com sucesso.", HttpStatus.OK);
 	}
 
 	public ResponseEntity<?> obterMarcasParaVitrine() {
-		List<PremioModel> premios = premioRepository.findAll();
-		List<MarcasVitrineResponseDTO> response = new ArrayList<>();
-		for(PremioModel premio : premios){
-			response.add(new MarcasVitrineResponseDTO(
-					premio.getMarca().getNome(),
-					premio.getMarca().getTitulo(),
-					premio.getDescricao(),
-					premio.getMarca().getLogo()
-			));
+		try {
+			List<PremioModel> premios = premioRepository.findAll();
+			List<MarcasVitrineResponseDTO> response = new ArrayList<>();
+			for(PremioModel premio : premios){
+				response.add(new MarcasVitrineResponseDTO(
+						premio.getMarca().getNome(),
+						premio.getMarca().getTitulo(),
+						premio.getDescricao(),
+						premio.getMarca().getLogo()));
+			}
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (RuntimeException e) {
+			throw new EventInternalServerErrorException(e.getMessage());
 		}
-		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 
