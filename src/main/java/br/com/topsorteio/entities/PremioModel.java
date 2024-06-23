@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="tbpremio")
+@Table(name = "tbpremio")
 public class PremioModel {
 
     @Id
@@ -49,7 +49,7 @@ public class PremioModel {
     @Column(name="criadoem", nullable=false)
     private Date criadoEm = new Date();
 
-    @OneToMany
+    @OneToMany(mappedBy = "premio")
     private List<SorteioModel> sorteios;
 
     public PremioModel(PremioRegisterRequestDTO data, MarcaModel marca) throws IOException {
