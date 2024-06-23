@@ -66,7 +66,7 @@ public class PremioService {
         List<OpcoesMarcasDTO> marcas = new ArrayList<>();
 
         for(MarcaModel marca : opcoesMarcas){
-            marcas.add(new OpcoesMarcasDTO(marca.getNome(), marca.getLogo()));
+            marcas.add(new OpcoesMarcasDTO(marca.getId(), marca.getNome(), marca.getLogo()));
         }
 
         PremioModel premio = premioOpt.get();
@@ -99,25 +99,13 @@ public class PremioService {
 
         Optional<MarcaModel> marcaOpt = marcaRepository.findById(request.marcaId());
         if (marcaOpt.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Marca não encontrada", HttpStatus.NOT_FOUND);
         }
 
         PremioModel premio = new PremioModel(request, marcaOpt.get(), userOpt.get());
-        PremioModel premioSalvo = premioRepository.save(premio);
+        premioRepository.save(premio);
 
-        PremioRegisterResponseDTO response = new PremioRegisterResponseDTO(
-                premioSalvo.getId(),
-                premioSalvo.getNome(),
-                premioSalvo.getCodigoSku(),
-                premioSalvo.getImagem(),
-                premioSalvo.getQuantidade(),
-                premioSalvo.getDescricao(),
-                premioSalvo.getMarca().getId(),
-                premioSalvo.getCriadoPor().getId(),
-                premioSalvo.getCriadoEm()
-                );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return new ResponseEntity<>("Prêmio registrado com sucesso.", HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> editarPremio(Integer id, PremioEditRequestDTO request) throws IOException{
@@ -148,18 +136,8 @@ public class PremioService {
         premio.setMarca(marcaOpt.get());
 
         premioRepository.save(premio);
-
-        PremioEditResponseDTO response = new PremioEditResponseDTO(
-                premio.getId(),
-                premio.getNome(),
-                premio.getCodigoSku(),
-                premio.getImagem(),
-                premio.getQuantidade(),
-                premio.getDescricao(),
-                premio.getMarca().getId());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>("Prêmio editado com sucesso", HttpStatus.OK);
     }
-
 
     public ResponseEntity<?> removerPremio(Integer id) {
         Optional<PremioModel> premio = premioRepository.findById(id);
@@ -167,9 +145,6 @@ public class PremioService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         premioRepository.deleteById(id);
-        return new ResponseEntity<>("Prêmio de ID " + id + " removido com sucesso.", HttpStatus.OK);
+        return new ResponseEntity<>("Prêmio de ID removido com sucesso.", HttpStatus.OK);
     }
-
-
-
 }
