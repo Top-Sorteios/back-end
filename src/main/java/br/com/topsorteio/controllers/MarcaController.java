@@ -1,6 +1,5 @@
 package br.com.topsorteio.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
@@ -32,12 +31,12 @@ public class MarcaController {
 	}
 
 	@PostMapping("/registrar")
-	public ResponseEntity<?> registrarMarca(@ModelAttribute MarcaRegisterRequestDTO request) throws IOException {
+	public ResponseEntity<?> registrarMarca(@ModelAttribute MarcaRegisterRequestDTO request){
 		return repository.registrarMarca(request);
 	}
 
 	@PutMapping("/editar/{id}")
-	public ResponseEntity<?> editarMarca(@PathVariable Integer id, @ModelAttribute MarcaEditRequestDTO request) throws IOException {
+	public ResponseEntity<?> editarMarca(@PathVariable Integer id, @ModelAttribute MarcaEditRequestDTO request){
 		return repository.editarMarca(id, request);
 	}
 
