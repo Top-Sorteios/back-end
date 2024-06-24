@@ -5,6 +5,7 @@ import br.com.topsorteio.dtos.SorteioResquestDTO;
 import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
 import br.com.topsorteio.entities.HistoricoSorteioModel;
 import br.com.topsorteio.service.SorteioService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class SorteioController {
 
 
     @PostMapping("/historico-sorteio/turma")
-    public List<HistoricoSorteioModel> buscarPorTurma(@RequestBody ObterHistoricoSorteioPorTurmaRequestDTO request) {
+    public ResponseEntity<List<HistoricoSorteioModel>> buscarPorTurma(@RequestBody ObterHistoricoSorteioPorTurmaRequestDTO request) {
         return repository.buscarPorTurma(request.turmaNome());
     }
 

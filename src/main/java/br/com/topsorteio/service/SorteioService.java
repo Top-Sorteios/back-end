@@ -137,13 +137,13 @@ public class SorteioService {
 
     }
 
-    public List<HistoricoSorteioModel> buscarPorTurma(String turmaNome) {
+    public ResponseEntity<List<HistoricoSorteioModel>> buscarPorTurma(String turmaNome) {
         try {
             List<HistoricoSorteioModel> historicoPorTurma = historicoSorteioRepository.findByTurmaNome(turmaNome);
             if (historicoPorTurma.isEmpty()) {
                 throw new EventBadRequestException("Nenhum histórico encontrado para a turma: " + turmaNome);
             }
-            return historicoPorTurma;
+            return new ResponseEntity<>(historicoPorTurma, HttpStatus.OK);
         } catch (Exception ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
