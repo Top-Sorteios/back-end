@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/marcas/vitrine").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/marcas/obter").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/premios/obter").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/sorteios/historico-sorteio").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/sorteios/historico-sorteio/turma").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
