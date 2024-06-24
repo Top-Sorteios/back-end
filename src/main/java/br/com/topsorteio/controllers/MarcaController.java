@@ -1,6 +1,5 @@
 package br.com.topsorteio.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
