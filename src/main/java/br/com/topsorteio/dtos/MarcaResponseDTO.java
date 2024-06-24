@@ -1,4 +1,6 @@
 package br.com.topsorteio.dtos;
 
-public record MarcaResponseDTO(Integer id, String nome, String titulo, int ordemExibicao, byte[] logo, byte[] banner) {
+import java.util.Date;
+
+public record MarcaResponseDTO(Integer id, String nome, String titulo, int ordemExibicao, byte[] logo, byte[] banner, String criadoPor, Date criadoEm) {
 }

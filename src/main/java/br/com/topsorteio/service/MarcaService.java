@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import br.com.topsorteio.dtos.*;
 import br.com.topsorteio.entities.PremioModel;
 import br.com.topsorteio.entities.UserModel;
-import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.repositories.IPremioRepository;
@@ -70,7 +68,9 @@ public class MarcaService {
 					 marca.getTitulo(),
 					 marca.getOrdemExibicao(),
 					 marca.getLogo(),
-					 marca.getBanner());
+					 marca.getBanner(),
+					 marca.getCriadoPor().getNome(),
+					 marca.getCriadoEm());
 			 return new ResponseEntity<>(response, HttpStatus.OK);
 		 } catch (JpaSystemException e) {
 			 throw new EventInternalServerErrorException(e.getMessage());
