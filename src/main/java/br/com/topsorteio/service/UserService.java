@@ -68,7 +68,7 @@ public class UserService {
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (RuntimeException ex) {
-            throw new EventInternalServerErrorException(ex.getMessage());
+            throw new EventBadRequestException(ex.getMessage());
         }
     }
 

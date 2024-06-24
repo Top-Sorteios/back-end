@@ -105,7 +105,6 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 | GET| https://modulo-sorteios.azurewebsites.net/premios/obter/{id} | ADMIN |
 | PUT| https://modulo-sorteios.azurewebsites.net/premios/editar/{id} | ADMIN |
 | DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id} | ADMIN |
-| POST | https://modulo-sorteios.azurewebsites.net/premios/registrar
 
 
 https://modulo-sorteios.azurewebsites.net/premios/registrar
@@ -135,11 +134,13 @@ https://modulo-sorteios.azurewebsites.net/premios/registrar
 ```
 **SORTEIOS**
 
-| MÉTODO | LINK | PERMISSÃO |
-|-----|------|-----------|
-| POST | https://modulo-sorteios.azurewebsites.net/premios/sortear | ADMIN |
-| POST | https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio | ADMIN |
-| GET| https://modulo-sorteios.azurewebsites.net/sorteios/sorteios-da-semana | ADMIN |
+| MÉTODO | LINK                                                                        | PERMISSÃO |
+|--------|-----------------------------------------------------------------------------|-----------|
+| POST   | https://modulo-sorteios.azurewebsites.net/premios/sortear                   | ADMIN     |
+| POST   | https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio | ADMIN     |
+| GET    | https://modulo-sorteios.azurewebsites.net/sorteios/sorteios-da-semana       | ADMIN     |
+| GET    | https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio        | USER   |
+| POST   | https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma  | USER   |
 
 https://modulo-sorteios.azurewebsites.net/sorteios/sortear
 
@@ -156,6 +157,12 @@ https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio
 ```console
 {
     "sorteio_surpresa": Boolean || 0/1,
+}
+```
+https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma
+```console
+{
+ "turmaNome": String
 }
 ```
 

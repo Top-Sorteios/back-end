@@ -4,6 +4,7 @@ import br.com.topsorteio.dtos.SorteioResquestDTO;
 import br.com.topsorteio.dtos.PremioTotalParticipantesResponseDTO;
 import br.com.topsorteio.dtos.ProcedureParticipandoSorteioResponseDTO;
 import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
+import br.com.topsorteio.entities.HistoricoSorteioModel;
 import br.com.topsorteio.entities.PremioModel;
 import br.com.topsorteio.entities.SorteioModel;
 import br.com.topsorteio.entities.UserModel;
@@ -11,6 +12,7 @@ import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
 import br.com.topsorteio.repositories.IPremioRepository;
+import br.com.topsorteio.repositories.IHistoricoSorteioRepository;
 import br.com.topsorteio.repositories.iSorteioRepository;
 import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
@@ -36,14 +38,16 @@ public class SorteioService {
     @Autowired
     private iSorteioRepository sorteioRepository;
     @Autowired
+    private IHistoricoSorteioRepository historicoSorteioRepository;
+    @Autowired
     private EntityManager entityManager;
 
     @Transactional(rollbackFor = JpaSystemException.class)
-    public ResponseEntity sortearUsuario(SorteioResquestDTO data){
+    public ResponseEntity sortearUsuario(SorteioResquestDTO data) {
         try {
             int isSorteioSurpresa = 0;
 
-            if(data.sorteio_surpresa())
+            if (data.sorteio_surpresa())
                 isSorteioSurpresa = 1;
 
 
@@ -57,7 +61,7 @@ public class SorteioService {
             List<Object[]> queryResult = storedProcedure.getResultList();
 
             for (Object[] item : queryResult) {
-                ProcedureParticipandoSorteioResponseDTO dto = new ProcedureParticipandoSorteioResponseDTO((Integer) item[0],(String) (item[1]), (String) (item[2]), (String) (item[3]), (String) (item[4]));
+                ProcedureParticipandoSorteioResponseDTO dto = new ProcedureParticipandoSorteioResponseDTO((Integer) item[0], (String) (item[1]), (String) (item[2]), (String) (item[3]), (String) (item[4]));
                 usuariosParticipantesDTO.add(dto);
             }
 
@@ -74,31 +78,31 @@ public class SorteioService {
                 premio.subtrair(1);
 
                 //Registro do Sorteio
-                SorteioModel sorteio = new SorteioModel(premio, usuarioGanhador, usuarioGanhador.getTurma(),emailAdm, data.sorteio_surpresa());
+                SorteioModel sorteio = new SorteioModel(premio, usuarioGanhador, usuarioGanhador.getTurma(), emailAdm, data.sorteio_surpresa());
 //                ganhador.getTurma().setParticipandoSorteio(false);
 
                 //Salvar Ganhador
-                 sorteioRepository.save(sorteio);
+                sorteioRepository.save(sorteio);
 
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }
             return new ResponseEntity<>("Ninguem participando do Sorteio", HttpStatus.BAD_REQUEST);
-        }catch(JpaSystemException ex){
+        } catch (JpaSystemException ex) {
             throw new EventInternalServerErrorException("Algo de inesperado.");
         }
     }
 
-    private PremioModel validateSorteio(SorteioResquestDTO data){
+    private PremioModel validateSorteio(SorteioResquestDTO data) {
         return premioRepository.findByCodigoSku(data.codigo_sku())
                 .map(premio -> premio.getQuantidade() > 0 ? premio : null)
                 .orElseThrow(() -> new EventBadRequestException("Esse premio não tem mais itens."));
     }
 
-    public ResponseEntity participantesDoSorteio(isSorteioSurpresaRequestDTO data){
+    public ResponseEntity participantesDoSorteio(isSorteioSurpresaRequestDTO data) {
         int isSorteioSurpresa = 0;
 
-        if(data.sorteio_surpresa())
+        if (data.sorteio_surpresa())
             isSorteioSurpresa = 1;
 
         StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("SP_ObterUsuariosParaSorteio_V2_S");
@@ -109,18 +113,39 @@ public class SorteioService {
 
         List<Object[]> queryResult = storedProcedure.getResultList();
 
-        if(queryResult.isEmpty()) return new ResponseEntity<>("Sem Participantes", HttpStatus.NOT_FOUND);
+        if (queryResult.isEmpty()) return new ResponseEntity<>("Sem Participantes", HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(new PremioTotalParticipantesResponseDTO(queryResult.size()), HttpStatus.OK);
     }
 
-    public ResponseEntity obterSorteiosDaSemana(){
-        try{
-           List<SorteioModel> todosOsSorteios = sorteioRepository.findAll();
-           return new ResponseEntity<>(todosOsSorteios, HttpStatus.OK);
-        }catch(Exception ex){
+    public ResponseEntity obterSorteiosDaSemana() {
+        try {
+            List<SorteioModel> todosOsSorteios = sorteioRepository.findAll();
+            return new ResponseEntity<>(todosOsSorteios, HttpStatus.OK);
+        } catch (Exception ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
 
+    public ResponseEntity obterHistoricoSorteio() {
+        try {
+            List<HistoricoSorteioModel> historicoSorteio = historicoSorteioRepository.findAll();
+            return new ResponseEntity<>(historicoSorteio, HttpStatus.OK);
+        } catch (Exception ex) {
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+
+    }
+
+    public List<HistoricoSorteioModel> buscarPorTurma(String turmaNome) {
+        try {
+            List<HistoricoSorteioModel> historicoPorTurma = historicoSorteioRepository.findByTurmaNome(turmaNome);
+            if (historicoPorTurma.isEmpty()) {
+                throw new EventBadRequestException("Nenhum histórico encontrado para a turma: " + turmaNome);
+            }
+            return historicoPorTurma;
+        } catch (Exception ex) {
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
+    }
 }
