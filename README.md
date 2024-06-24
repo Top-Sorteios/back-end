@@ -79,8 +79,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
     "titulo": string, 
     "logo": null, // byte array
     "banner": null, // byte array
-    "ordemExibicao": int,
-    "criadoPor": Integer
+    "ordemExibicao": int
 }
 ```
 
@@ -115,8 +114,7 @@ https://modulo-sorteios.azurewebsites.net/premios/registrar
   "imagem": null, //byte array
   "quantidade": int,
   "descricao": string,
-  "marcaId": int,
-  "criadoPor": int
+  "marcaId": int
 }
 ```
 
