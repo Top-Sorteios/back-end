@@ -167,7 +167,7 @@ https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma
 
 | MÉTODO | LINK                                                                        | PERMISSÃO |
 |--------|-----------------------------------------------------------------------------|-----------|
-| GET    | https://modulo-sorteios.azurewebsites.net/turmas/obter                | ADMIN     |
+| GET    | https://modulo-sorteios.azurewebsites.net/turmas/obter                | USER     |
 
 
 
