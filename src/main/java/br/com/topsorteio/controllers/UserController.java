@@ -69,5 +69,8 @@ public class UserController {
         return ResponseEntity.ok("Hello World");
     }
 
-
+    @PostMapping("/sorteio/participar")
+    public ResponseEntity<?> participarSorteio(){
+        return repository.participarSorteio();
+    }
 }

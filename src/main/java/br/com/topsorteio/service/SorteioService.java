@@ -122,5 +122,4 @@ public class SorteioService {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
-
 }

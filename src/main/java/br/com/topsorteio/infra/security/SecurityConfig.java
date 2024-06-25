@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/premios/obter").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/marcas/obter/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/premios/obter/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/usuarios/sorteio/participar").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
