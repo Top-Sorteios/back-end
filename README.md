@@ -163,7 +163,11 @@ https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma
  "turmaNome": String
 }
 ```
+**SORTEIOS**
 
+| MÉTODO | LINK                                                                        | PERMISSÃO |
+|--------|-----------------------------------------------------------------------------|-----------|
+| GET    | https://modulo-sorteios.azurewebsites.net/turmas/obter                | ADMIN     |
 
 
 
