@@ -221,7 +221,6 @@ public class UserService {
     }
 
 
-
 //    --------------
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
@@ -296,7 +295,21 @@ public class UserService {
         } catch (Exception ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
+    }
 
+    public ResponseEntity participarSorteio(){
+        try {
+            UserModel user = getAuthenticatedUser();
+            if (user.isParticipandoSorteio()) {
+                throw new IllegalStateException("Usuário já está participando do sorteio.");
+            }
+            user.setParticipandoSorteio(true);
+            repository.save(user);
+
+            return new ResponseEntity<>("Usuário inscrito no sorteio com sucesso.", HttpStatus.OK);
+        } catch (Exception e) {
+            throw new EventInternalServerErrorException(e.getMessage());
+        }
     }
 
     public UserModel getAuthenticatedUser() {
