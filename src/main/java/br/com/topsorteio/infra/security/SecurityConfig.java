@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/marcas/obter/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/premios/obter/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/usuarios/sorteio/participar").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/sorteios/historico-sorteio").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/sorteios/historico-sorteio/turma").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
