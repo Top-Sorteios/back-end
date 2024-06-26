@@ -1,13 +1,7 @@
 package br.com.topsorteio.service;
 
-import br.com.topsorteio.dtos.SorteioResquestDTO;
-import br.com.topsorteio.dtos.PremioTotalParticipantesResponseDTO;
-import br.com.topsorteio.dtos.ProcedureParticipandoSorteioResponseDTO;
-import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
-import br.com.topsorteio.entities.HistoricoSorteioModel;
-import br.com.topsorteio.entities.PremioModel;
-import br.com.topsorteio.entities.SorteioModel;
-import br.com.topsorteio.entities.UserModel;
+import br.com.topsorteio.dtos.*;
+import br.com.topsorteio.entities.*;
 import br.com.topsorteio.exceptions.EventBadRequestException;
 import br.com.topsorteio.exceptions.EventInternalServerErrorException;
 import br.com.topsorteio.exceptions.EventNotFoundException;
@@ -18,6 +12,7 @@ import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -148,4 +143,20 @@ public class SorteioService {
             throw new EventInternalServerErrorException(ex.getMessage());
         }
     }
+
+
+
+    public ResponseEntity filtrarPorTurmas(FiltrarPorTurmasRequestDTO data){
+        List<FiltrarPorTurmasResponseDTO> response = new ArrayList<>();
+
+        for(String turma : data.turmas()){
+
+            List<HistoricoSorteioModel> searchTurma = historicoSorteioRepository.findByTurmaNome(turma);
+
+            response.add(new FiltrarPorTurmasResponseDTO(historicoSorteioRepository.findByTurmaNome(turma)));
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

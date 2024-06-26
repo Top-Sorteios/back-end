@@ -1,5 +1,6 @@
 package br.com.topsorteio.service;
 
+import br.com.topsorteio.dtos.FiltrarPorTurmasRequestDTO;
 import br.com.topsorteio.dtos.TurmaResponseDTO;
 import br.com.topsorteio.entities.TurmaModel;
 import br.com.topsorteio.repositories.iTurmaRepository;
@@ -26,5 +27,19 @@ public class TurmaService {
         }
 
         return new ResponseEntity<>(responseTurma, HttpStatus.OK);
+    }
+
+
+    public ResponseEntity filtrarTurma(FiltrarPorTurmasRequestDTO data){
+        List<TurmaResponseDTO> response = new ArrayList<>();
+
+        for(String turma : data.turmas()){
+
+            TurmaModel searchTurma = repository.findByNome(turma).get();
+            response.add(new TurmaResponseDTO(searchTurma.getId(), searchTurma.getNome(), searchTurma.isParticipandoSorteio(), searchTurma.getCriadoem()));;
+
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

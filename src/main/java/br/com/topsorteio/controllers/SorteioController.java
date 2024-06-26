@@ -1,5 +1,6 @@
 package br.com.topsorteio.controllers;
 
+import br.com.topsorteio.dtos.FiltrarPorTurmasRequestDTO;
 import br.com.topsorteio.dtos.ObterHistoricoSorteioPorTurmaRequestDTO;
 import br.com.topsorteio.dtos.SorteioResquestDTO;
 import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
@@ -41,6 +42,11 @@ public class SorteioController {
     @PostMapping("/historico-sorteio/turma")
     public ResponseEntity<List<HistoricoSorteioModel>> buscarPorTurma(@RequestBody ObterHistoricoSorteioPorTurmaRequestDTO request) {
         return repository.buscarPorTurma(request.turmaNome());
+    }
+
+    @PostMapping("/historico-sorteio/obter/lista-de-turmas")
+    public ResponseEntity filtrarPorTurmas(@RequestBody FiltrarPorTurmasRequestDTO request){
+        return repository.filtrarPorTurmas(request);
     }
 
 }
