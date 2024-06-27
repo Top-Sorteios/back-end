@@ -11,6 +11,7 @@
 | PUT | https://modulo-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
 | GET | https://modulo-sorteios.azurewebsites.net/usuarios/helloworld | X |
 | POST | https://modulo-sorteios.azurewebsites.net/usuarios/sorteio/participar | USER |
+| PUT | https://modulo-sorteios.azurewebsites.net/usuarios/editar/tipo/{id} | ADMIN |
 
 
 <b>Formato Requisições</b>
@@ -61,6 +62,14 @@ https://modulo-sorteios.azurewebsites.net/usuarios/esqueci-senha
 ```console
 {
 	"email": string 
+}
+```
+
+https://modulo-sorteios.azurewebsites.net/usuarios/editar/tipo/{id}
+
+```console
+{
+	"adm": boolean
 }
 ```
 **MARCAS**
