@@ -10,6 +10,7 @@
 | GET | https://modulo-sorteios.azurewebsites.net/usuarios/obter/{email} | USER |
 | PUT | https://modulo-sorteios.azurewebsites.net/usuarios/editar/senha/{email} | USER |
 | GET | https://modulo-sorteios.azurewebsites.net/usuarios/helloworld | X |
+| POST | https://modulo-sorteios.azurewebsites.net/usuarios/sorteio/participar | USER |
 
 
 <b>Formato Requisições</b>
