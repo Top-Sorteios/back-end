@@ -316,4 +316,23 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (UserModel) authentication.getPrincipal();
     }
+
+    public ResponseEntity<?> editarTipo(Long id, UserEditTypeRequestDTO request) {
+        try{
+            Optional<UserModel> userOpt = repository.findById(id);
+            if(userOpt.isEmpty()){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+
+            UserModel user = userOpt.get();
+
+            user.setAdm(request.adm());
+
+            repository.save(user);
+
+            return new ResponseEntity<>("Tipo do usuário alterado com sucesso", HttpStatus.OK);
+        }catch (JpaSystemException ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }catch(RuntimeException ex){
+            throw new EventBadRequestException(ex.getMessage());
+        }
+    }
 }

@@ -73,4 +73,9 @@ public class UserController {
     public ResponseEntity<?> participarSorteio(){
         return repository.participarSorteio();
     }
+
+    @PutMapping("/editar/tipo/{id}")
+    public ResponseEntity<?> editarTipo(@PathVariable Long id, @RequestBody UserEditTypeRequestDTO request){
+        return repository.editarTipo(id, request);
+    }
 }
