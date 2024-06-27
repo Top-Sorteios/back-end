@@ -151,9 +151,26 @@ public class SorteioService {
 
         for(String turma : data.turmas()){
 
-            List<HistoricoSorteioModel> searchTurma = historicoSorteioRepository.findByTurmaNome(turma);
+            List<HistoricoSorteioModel> searchTurmas = historicoSorteioRepository.findByTurmaNome(turma);
 
-            response.add(new FiltrarPorTurmasResponseDTO(historicoSorteioRepository.findByTurmaNome(turma)));
+            for(HistoricoSorteioModel searchTurma : searchTurmas){
+                response.add(new FiltrarPorTurmasResponseDTO(
+                        searchTurma.getGanhadorNome(),
+                        searchTurma.getGanhadorEmail(),
+                        searchTurma.getGanhadorDataNascimento(),
+                        searchTurma.getPremioNome(),
+                        searchTurma.getPremioSku(),
+                        searchTurma.getPremioImagem(),
+                        searchTurma.getPremioDescricao(),
+                        searchTurma.isPremioSurpresa(),
+                        searchTurma.getTurmaNome(),
+                        searchTurma.getMarcaNome(),
+                        searchTurma.getSorteadoEm(),
+                        searchTurma.getSorteadoPor(),
+                        searchTurma.getCriadoEm()
+                ));
+            }
+
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
