@@ -34,7 +34,7 @@ https://modulo-sorteios.azurewebsites.net/usuarios/primeiro-acesso
 {
 	"email": string, 
 	"cpf": string,  
-	"datanascimento": string, //exemplo:"AAAA/MM/DD"
+	"datanascimento": string, //exemplo:"AAAA-MM-DD"
  	"senha": string,		
 }
 ```
