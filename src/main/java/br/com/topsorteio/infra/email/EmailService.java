@@ -16,7 +16,7 @@ public class EmailService {
     public void sendEmail(EmailSenderDTO email){
         try{
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("noreply@topsorteio.com");
+            message.setFrom("noreplay@maisfocounisolutions.com.br");
             message.setTo(email.para());
             message.setSubject(email.assunto());
             message.setText(email.mensagem());

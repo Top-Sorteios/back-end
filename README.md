@@ -181,3 +181,39 @@ https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma
 
 
 
+**DESTAQUE INDEX**
+
+| MÉTODO | LINK                                                         | PERMISSÃO |
+|--------|--------------------------------------------------------------|-----------|
+| GET    | https://modulo-sorteios.azurewebsites.net/index/obter        | USER      |
+| GET    | https://modulo-sorteios.azurewebsites.net/index/obter/{id}   | USER      |
+| POST   | https://modulo-sorteios.azurewebsites.net/index/registrar    | ADMIN     |
+| PUT    | https://modulo-sorteios.azurewebsites.net/index/editar/{id}  | ADMIN     |
+| DELETE | https://modulo-sorteios.azurewebsites.net/index/deletar/{id} | ADMIN     |
+
+
+https://modulo-sorteios.azurewebsites.net/index/registrar
+
+
+| Key    |   Value  |   Type    |
+|--------|----------|-----------|
+| nome   |  string  |   Text    |
+| titulo |  string  |   Text    |
+| imagem |  arquivo |   file    |
+
+
+https://modulo-sorteios.azurewebsites.net/index/editar/{id}
+
+| Key    |   Value  |   Type    |
+|--------|----------|-----------|
+| nome   |  string  |   Text    |
+| titulo |  string  |   Text    |
+| imagem |  arquivo |   file    |
+
+https://modulo-sorteios.azurewebsites.net/index/deletar/{id}
+
+| Key    |   Value  |   Type    |
+|--------|----------|-----------|
+| nome   |  string  |   Text    |
+| titulo |  string  |   Text    |
+| imagem |  arquivo |   file    |
