@@ -55,6 +55,7 @@ public class PremioService {
                         premio.getDescricao(),
                         premio.getImagem(),
                         premio.getMarca().getNome(),
+                        premio.getQuantidade(),
                         premio.getCriadoPor().getNome(),
                         premio.getCriadoEm()));
             }
