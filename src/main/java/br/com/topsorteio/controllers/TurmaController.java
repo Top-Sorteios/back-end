@@ -1,7 +1,6 @@
 package br.com.topsorteio.controllers;
 
 
-import br.com.topsorteio.dtos.FiltrarPorTurmasRequestDTO;
 import br.com.topsorteio.service.TurmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

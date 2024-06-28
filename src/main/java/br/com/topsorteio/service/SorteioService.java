@@ -12,7 +12,6 @@ import br.com.topsorteio.repositories.iUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -144,36 +143,39 @@ public class SorteioService {
         }
     }
 
-
-
     public ResponseEntity filtrarPorTurmas(FiltrarPorTurmasRequestDTO data){
-        List<FiltrarPorTurmasResponseDTO> response = new ArrayList<>();
+        try{
+            List<FiltrarPorTurmasResponseDTO> response = new ArrayList<>();
 
-        for(String turma : data.turmas()){
+            for(String turma : data.turmas()){
 
-            List<HistoricoSorteioModel> searchTurmas = historicoSorteioRepository.findByTurmaNome(turma);
+                List<HistoricoSorteioModel> searchTurmas = historicoSorteioRepository.findByTurmaNome(turma);
 
-            for(HistoricoSorteioModel searchTurma : searchTurmas){
-                response.add(new FiltrarPorTurmasResponseDTO(
-                        searchTurma.getGanhadorNome(),
-                        searchTurma.getGanhadorEmail(),
-                        searchTurma.getGanhadorDataNascimento(),
-                        searchTurma.getPremioNome(),
-                        searchTurma.getPremioSku(),
-                        searchTurma.getPremioImagem(),
-                        searchTurma.getPremioDescricao(),
-                        searchTurma.isPremioSurpresa(),
-                        searchTurma.getTurmaNome(),
-                        searchTurma.getMarcaNome(),
-                        searchTurma.getSorteadoEm(),
-                        searchTurma.getSorteadoPor(),
-                        searchTurma.getCriadoEm()
-                ));
+                for(HistoricoSorteioModel searchTurma : searchTurmas){
+                    response.add(new FiltrarPorTurmasResponseDTO(
+                            searchTurma.getGanhadorNome(),
+                            searchTurma.getGanhadorEmail(),
+                            searchTurma.getGanhadorDataNascimento(),
+                            searchTurma.getPremioNome(),
+                            searchTurma.getPremioSku(),
+                            searchTurma.getPremioImagem(),
+                            searchTurma.getPremioDescricao(),
+                            searchTurma.isPremioSurpresa(),
+                            searchTurma.getTurmaNome(),
+                            searchTurma.getMarcaNome(),
+                            searchTurma.getSorteadoEm(),
+                            searchTurma.getSorteadoPor(),
+                            searchTurma.getCriadoEm()
+                    ));
+                }
+
             }
 
-        }
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch(Exception ex){
+            throw new EventInternalServerErrorException(ex.getMessage());
+        }
     }
 
 }

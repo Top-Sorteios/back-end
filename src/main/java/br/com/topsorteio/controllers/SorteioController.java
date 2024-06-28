@@ -6,7 +6,6 @@ import br.com.topsorteio.dtos.SorteioResquestDTO;
 import br.com.topsorteio.dtos.isSorteioSurpresaRequestDTO;
 import br.com.topsorteio.entities.HistoricoSorteioModel;
 import br.com.topsorteio.service.SorteioService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
