@@ -51,6 +51,11 @@ public class UserService {
         return repository.findByEmail(email).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado."));
     }
 
+    public UserModel getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (UserModel) authentication.getPrincipal();
+    }
+
     public ResponseEntity<Object> login(LoginRequestDTO data) {
         try {
 
@@ -182,11 +187,9 @@ public class UserService {
             throw new EventBadRequestException(ex.getMessage());
         }
     }
-
     private String getCellStringValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
     }
-
     private String getCpfStringValue(Row row, int cellIndex) {
         long cpf = (long) getCellNumericValue(row, cellIndex);
 
@@ -202,10 +205,9 @@ public class UserService {
             UserModel userResponse = validateEmail(email);
 
             if(!(passwordEncoder.matches(data.senhaAtual(), userResponse.getSenha()) && email.equals(userResponse.getEmail())))
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Senha Atual inválida", HttpStatus.BAD_REQUEST);
 
             userResponse.setSenha(passwordEncoder.encode(data.senha()));
-            BeanUtils.copyProperties(data, userResponse);
 
             repository.save(userResponse);
 
@@ -312,10 +314,7 @@ public class UserService {
         }
     }
 
-    public UserModel getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (UserModel) authentication.getPrincipal();
-    }
+
 
     public ResponseEntity<?> editarTipo(Long id, UserEditTypeRequestDTO request) {
         try{
