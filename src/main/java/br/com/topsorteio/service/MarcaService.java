@@ -1,7 +1,9 @@
 package br.com.topsorteio.service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.topsorteio.dtos.*;
@@ -41,8 +43,10 @@ public class MarcaService {
 			List<MarcaModel> marcas = marcaRepository.findAll();
 			if(marcas.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+
 			List<MarcasCadastradasResponseDTO> response = new ArrayList<>();
-			for(MarcaModel marca : marcas)
+			for(MarcaModel marca : marcas){
+
 				response.add(new MarcasCadastradasResponseDTO(
 						marca.getId(),
 						marca.getNome(),
@@ -51,7 +55,10 @@ public class MarcaService {
 						marca.getBanner(),
 						marca.getOrdemExibicao(),
 						marca.getCriadoPor().getNome(),
-						marca.getCriadoEm()));
+						new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(marca.getCriadoEm()))
+				);
+			}
+
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (RuntimeException e) {
 			throw new EventInternalServerErrorException(e.getMessage());
@@ -70,7 +77,9 @@ public class MarcaService {
 					 marca.getLogo(),
 					 marca.getBanner(),
 					 marca.getCriadoPor().getNome(),
-					 marca.getCriadoEm());
+					 new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(marca.getCriadoEm())
+			 );
+
 			 return new ResponseEntity<>(response, HttpStatus.OK);
 		 } catch (JpaSystemException e) {
 			 throw new EventInternalServerErrorException(e.getMessage());

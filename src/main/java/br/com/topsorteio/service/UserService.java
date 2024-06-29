@@ -91,7 +91,7 @@ public class UserService {
         }
     }
 
-//    ------------
+
     public ResponseEntity cadastrarUsuario(ImportUsuarioRequestDTO request) {
         MultipartFile file = request.file();
         if (file == null || file.isEmpty()) {
@@ -198,7 +198,7 @@ public class UserService {
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
-//------------------
+
 
     public ResponseEntity editarSenha(UserEditPasswordRequestDTO data, String email){
         try{
@@ -223,7 +223,7 @@ public class UserService {
     }
 
 
-//    --------------
+
     public ResponseEntity primeiroAcesso(FirstAcessRequestDTO data){
         try{
             UserModel usuarioPrimeiroAcesso = verificarPrimeiroAcesso(data);

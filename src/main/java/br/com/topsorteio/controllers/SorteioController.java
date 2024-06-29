@@ -40,7 +40,7 @@ public class SorteioController {
 
     @PostMapping("/historico-sorteio/turma")
     public ResponseEntity<List<HistoricoSorteioModel>> buscarPorTurma(@RequestBody ObterHistoricoSorteioPorTurmaRequestDTO request) {
-        return repository.buscarPorTurma(request.turmaNome());
+        return repository.buscarSorteioPorTurma(request.turmaNome());
     }
 
     @PostMapping("/historico-sorteio/obter/lista-de-turmas")
