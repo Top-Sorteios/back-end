@@ -66,7 +66,7 @@ public class UserController {
     @GetMapping
     @RequestMapping("/helloworld")
     public ResponseEntity HelloWorld(){
-        return ResponseEntity.ok("Hello World 3.4");
+        return ResponseEntity.ok("Hello World 4.0");
     }
 
     @PostMapping("/sorteio/participar")

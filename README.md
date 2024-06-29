@@ -76,12 +76,12 @@ https://modulo-sorteios.azurewebsites.net/usuarios/editar/tipo/{id}
 
 | MÉTODO | LINK | PERMISSÃO |
 |-----|------|-----------|
-| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN |
-| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN |
-| DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/marcas/vitrine | USER |
+| POST | https://modulo-sorteios.azurewebsites.net/marcas/registrar | ADMIN     |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter | X         |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/obter/{id} | ADMIN     |
+| PUT | https://modulo-sorteios.azurewebsites.net/marcas/editar/{id} | ADMIN     |
+| DELETE | https://modulo-sorteios.azurewebsites.net/marcas/{id} | ADMIN     |
+| GET | https://modulo-sorteios.azurewebsites.net/marcas/vitrine | USER      |
 
 ```console
 {
@@ -185,8 +185,8 @@ https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio/turma
 
 | MÉTODO | LINK                                                         | PERMISSÃO |
 |--------|--------------------------------------------------------------|-----------|
-| GET    | https://modulo-sorteios.azurewebsites.net/index/obter        | USER      |
-| GET    | https://modulo-sorteios.azurewebsites.net/index/obter/{id}   | USER      |
+| GET    | https://modulo-sorteios.azurewebsites.net/index/obter        | X         |
+| GET    | https://modulo-sorteios.azurewebsites.net/index/obter/{id}   | ADMIN     |
 | POST   | https://modulo-sorteios.azurewebsites.net/index/registrar    | ADMIN     |
 | PUT    | https://modulo-sorteios.azurewebsites.net/index/editar/{id}  | ADMIN     |
 | DELETE | https://modulo-sorteios.azurewebsites.net/index/deletar/{id} | ADMIN     |
