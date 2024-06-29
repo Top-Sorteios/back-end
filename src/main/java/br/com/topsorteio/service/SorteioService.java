@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -124,6 +125,8 @@ public class SorteioService {
     public ResponseEntity obterHistoricoSorteio() {
         try {
             List<HistoricoSorteioModel> historicoSorteio = historicoSorteioRepository.findAll();
+
+
             return new ResponseEntity<>(historicoSorteio, HttpStatus.OK);
         } catch (Exception ex) {
             throw new EventInternalServerErrorException(ex.getMessage());
@@ -134,6 +137,26 @@ public class SorteioService {
     public ResponseEntity<List<HistoricoSorteioModel>> buscarSorteioPorTurma(String turmaNome) {
         try {
             List<HistoricoSorteioModel> historicoPorTurma = historicoSorteioRepository.findByTurmaNome(turmaNome);
+
+            List<FiltrarPorTurmasResponseDTO> response = new ArrayList<>();
+
+            for(HistoricoSorteioModel historico : historicoPorTurma){
+                response.add(new FiltrarPorTurmasResponseDTO(
+                        historico.getGanhadorNome(),
+                        historico.getGanhadorEmail(),
+                        historico.getGanhadorDataNascimento(),
+                        historico.getPremioNome(),
+                        historico.getPremioSku(),
+                        historico.getPremioImagem(),
+                        historico.getPremioDescricao(),
+                        historico.isPremioSurpresa(),
+                        historico.getTurmaNome(),
+                        historico.getMarcaNome(),
+                        historico.getSorteadoEm(),
+                        historico.getSorteadoPor(),
+                        new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(historico.getCriadoEm())
+                ));
+            }
 
             if (historicoPorTurma.isEmpty()) {
                 throw new EventBadRequestException("Nenhum histórico encontrado para a turma: " + turmaNome);
@@ -166,7 +189,7 @@ public class SorteioService {
                             searchTurma.getMarcaNome(),
                             searchTurma.getSorteadoEm(),
                             searchTurma.getSorteadoPor(),
-                            searchTurma.getCriadoEm()
+                            new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(searchTurma.getCriadoEm())
                     ));
                 }
 

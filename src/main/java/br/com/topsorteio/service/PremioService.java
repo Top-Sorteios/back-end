@@ -105,6 +105,7 @@ public class PremioService {
             MarcaModel marca = marcaRepository.findById(request.marcaId()).orElseThrow(() -> new EventNotFoundException("Marca com ID " + request.marcaId() + " não encontrada."));
 
             PremioModel premio = new PremioModel(request, marca);
+
             UserModel user = userService.getAuthenticatedUser();
             premio.setCriadoPor(user);
             premioRepository.save(premio);

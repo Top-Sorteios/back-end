@@ -19,7 +19,7 @@ public record FiltrarPorTurmasResponseDTO(
         String marcaNome,
         Date sorteadoEm,
         String sorteadoPor,
-        Date criadoEm
+        String criadoEm
 
         ) {
 }
