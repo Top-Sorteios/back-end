@@ -3,7 +3,6 @@ package br.com.topsorteio.service;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.topsorteio.dtos.*;
