@@ -2,7 +2,6 @@ package br.com.topsorteio.controllers;
 
 import br.com.topsorteio.dtos.DestaqueIndexRequestDTO;
 import br.com.topsorteio.dtos.DestaqueIndexResponseDTO;
-import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.service.DestaqueIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

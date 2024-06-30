@@ -5,15 +5,12 @@ import java.util.List;
 import br.com.topsorteio.dtos.MarcasCadastradasResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
-
 import br.com.topsorteio.dtos.MarcaEditRequestDTO;
 import br.com.topsorteio.dtos.MarcaRegisterRequestDTO;
 import br.com.topsorteio.service.MarcaService;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/marcas")
 public class MarcaController {
 
