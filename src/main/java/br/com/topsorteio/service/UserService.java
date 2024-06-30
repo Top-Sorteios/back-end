@@ -316,9 +316,9 @@ public class UserService {
 
 
 
-    public ResponseEntity<?> editarTipo(Long id, UserEditTypeRequestDTO request) {
+    public ResponseEntity<?> editarPermissaoAdministrador(String email, UserEditTypeRequestDTO request) {
         try{
-            Optional<UserModel> userOpt = repository.findById(id);
+            Optional<UserModel> userOpt = repository.findByEmail(email);
             if(userOpt.isEmpty()){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
 
             UserModel user = userOpt.get();
