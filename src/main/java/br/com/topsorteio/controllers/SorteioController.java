@@ -35,7 +35,7 @@ public class SorteioController {
     }
 
     @GetMapping("/historico-sorteio")
-    public ResponseEntity historicoSorteio(){return repository.obterHistoricoSorteio(); }
+    public ResponseEntity historicoSorteio(){ return repository.obterHistoricoSorteio(); }
 
 
     @PostMapping("/historico-sorteio/turma")

@@ -32,20 +32,30 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/usuarios/login", "/usuarios/esqueci-senha").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuarios/primeiro-acesso").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/helloworld", "/usuarios/premio").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/obter/{email}").hasRole("USER")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/usuarios/helloworld",
+                                "/usuarios/premio",
+                                "/marcas/vitrine",
+                                "/marcas/obter",
+                                "/index/obter"
+                        ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/usuarios/obter/{email}",
+                                "/turmas/obter",
+                                "/sorteios/historico-sorteio",
+                                "/premios/obter",
+                                "/premios/obter/{id}",
+                                "/marcas/obter/{id}"
+                        ).hasRole("USER")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/usuarios/sorteio/participar",
+                                "/sorteios/historico-sorteio/turma",
+                                "/historico-sorteio/obter/lista-de-turmas"
+                        ).hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/editar/senha/{email}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/marcas/vitrine").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/marcas/obter").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/premios/obter").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/marcas/obter/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/premios/obter/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/usuarios/sorteio/participar").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/sorteios/historico-sorteio").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/sorteios/historico-sorteio/turma").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/historico-sorteio/obter/lista-de-turmas").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/turmas/obter").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/index/obter").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
