@@ -285,7 +285,7 @@ public class UserService {
             UUID geradorDeSenha = UUID.randomUUID();
             String[] senha = geradorDeSenha.toString().split("-");
 
-            emailService.sendEmail(new EmailSenderDTO(data.email(), "Seila", "Sua senha foi alterada: " + senha[0]));
+            emailService.sendEmail(new EmailSenderDTO(data.email(), "Nova Senha", "Sua senha foi alterada: " + senha[0]));
             String senhaEncriptografada = passwordEncoder.encode(senha[0]);
 
             usuario.setSenha(senhaEncriptografada);
