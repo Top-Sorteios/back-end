@@ -74,7 +74,7 @@ public class SorteioService {
 
                 //Registro do Sorteio
                 SorteioModel sorteio = new SorteioModel(premio, usuarioGanhador, usuarioGanhador.getTurma(), emailAdm, data.sorteio_surpresa());
-//                ganhador.getTurma().setParticipandoSorteio(false);
+                usuarioGanhador.getTurma().setParticipandoSorteio(false);
 
                 //Salvar Ganhador
                 sorteioRepository.save(sorteio);
