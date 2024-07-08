@@ -2,30 +2,28 @@ package br.com.topsorteio.infra.email;
 
 
 import br.com.topsorteio.dtos.EmailSenderDTO;
-import br.com.topsorteio.exceptions.EventInternalServerErrorException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    @Autowired
-    private JavaMailSender mailSender;
 
-    public void sendEmail(EmailSenderDTO email){
-        try{
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("noreplay@maisfocounisolutions.com.br");
-            message.setTo(email.para());
-            message.setSubject(email.assunto());
-            message.setText(email.mensagem());
+    @Value("${sendgrid.api-key}")
+    private String sendGridApiKey;
 
-            mailSender.send(message);
+    public void sendEmail(EmailSenderDTO emailDto) {
 
-        }catch(Exception ex){
-            throw new EventInternalServerErrorException(ex.getMessage());
-        }
+        Email from = new Email("tecnologia@maisfocounisolutions.com.br");
+        String subject = emailDto.assunto();
+        Email to = new Email(emailDto.para());
+        Content content = new Content("text/plain", emailDto.mensagem());
+        Mail mail = new Mail(from, subject, to, content);
+
+        SendGrid sg = new SendGrid(sendGridApiKey);
 
     }
 }
