@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 HttpMethod.POST,
                                 "/usuarios/sorteio/participar",
                                 "/sorteios/historico-sorteio/turma",
-                                "/historico-sorteio/obter/lista-de-turmas"
+                                "/sorteios/historico-sorteio/obter/lista-de-turmas"
                         ).hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/editar/senha/{email}").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
