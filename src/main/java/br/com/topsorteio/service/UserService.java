@@ -285,7 +285,7 @@ public class UserService {
             UUID geradorDeSenha = UUID.randomUUID();
             String[] senha = geradorDeSenha.toString().split("-");
 
-            emailService.sendEmail(new EmailSenderDTO(data.email(), "Nova Senha", "Sua senha foi alterada: " + senha[0]));
+            emailService.sendEmail(new EmailSenderDTO(data.email(), "Nova Senha", "Sua senha foi alterada: " + senha[0] + "\n\nLogin: https://green-dune-0cd28a70f.5.azurestaticapps.net/html/login/index.html"));
             String senhaEncriptografada = passwordEncoder.encode(senha[0]);
 
             usuario.setSenha(senhaEncriptografada);
