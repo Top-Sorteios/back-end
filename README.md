@@ -144,7 +144,7 @@ https://modulo-sorteios.azurewebsites.net/premios/registrar
 
 | MÉTODO | LINK                                                                        | PERMISSÃO |
 |--------|-----------------------------------------------------------------------------|-----------|
-| POST   | https://modulo-sorteios.azurewebsites.net/premios/sortear                   | ADMIN     |
+| POST   | https://modulo-sorteios.azurewebsites.net/sorteios/sortear                   | ADMIN     |
 | POST   | https://modulo-sorteios.azurewebsites.net/sorteios/participantes-do-sorteio | ADMIN     |
 | GET    | https://modulo-sorteios.azurewebsites.net/sorteios/sorteios-da-semana       | ADMIN     |
 | GET    | https://modulo-sorteios.azurewebsites.net/sorteios/historico-sorteio        | USER   |
@@ -154,7 +154,7 @@ https://modulo-sorteios.azurewebsites.net/sorteios/sortear
 
 ```console
 {
-    "sorteio_surpresa": Boolean || 0/1,
+    "sorteio_surpresa": Boolean || true/false,
     "email_autenticado": String,
     "codigo_sku": String //"SKU1230"
 }
