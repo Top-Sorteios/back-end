@@ -66,7 +66,7 @@ public class SorteioService {
                 Random random = new Random();
                 ProcedureParticipandoSorteioResponseDTO sorteado = usuariosParticipantesDTO.get(random.nextInt(usuariosParticipantesDTO.size()));
 
-                UserModel usuarioGanhador = usuarioRepository.findByEmail(sorteado.email()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
+                UserModel usuarioGanhador = usuarioRepository.findById(sorteado.usuarioid().longValue()).orElseThrow(() -> new EventNotFoundException("Não foi possivel encontrar o ganhador."));
 
                 PremioModel premio = validateSorteio(data);
 
