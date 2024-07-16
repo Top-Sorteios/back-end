@@ -108,8 +108,6 @@ public class SorteioService {
 
         List<Object[]> queryResult = storedProcedure.getResultList();
 
-        if (queryResult.isEmpty()) return new ResponseEntity<>("Sem Participantes", HttpStatus.NOT_FOUND);
-
         return new ResponseEntity<>(new PremioTotalParticipantesResponseDTO(queryResult.size()), HttpStatus.OK);
     }
 
