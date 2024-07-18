@@ -191,9 +191,8 @@ public class UserService {
         return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
     }
     private String getCpfStringValue(Row row, int cellIndex) {
-        long cpf = (long) getCellNumericValue(row, cellIndex);
-
-        return Long.toString(cpf);
+        String cpf = getCellStringValue(row, cellIndex);
+        return cpf.replace(".", "").replace("-", "");
     }
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
@@ -240,9 +239,10 @@ public class UserService {
     private UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
         try{
             UserModel usuario = validateEmail(data.email());
+            String cpfFormatado = formatCpf(data.cpf());
 
             if(usuario.getEmail().equals(data.email())
-                    && usuario.getCpf().equals(data.cpf())
+                    && usuario.getCpf().equals(cpfFormatado)
                     && usuario.getDataNascimento().equals(data.datanascimento())
                     && (usuario.getSenha() == null || usuario.getSenha().isEmpty())){
 
@@ -258,9 +258,12 @@ public class UserService {
         }catch (RuntimeException ex){
             throw new EventInternalServerErrorException(ex.getMessage());
         }
-
     }
-//    ---------------
+
+    private String formatCpf(String cpf) {
+        return cpf.replace(".", "").replace("-", "");
+    }
+    //    ---------------
     public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         try{
             List<UserModel> allUser = repository.findAll();
