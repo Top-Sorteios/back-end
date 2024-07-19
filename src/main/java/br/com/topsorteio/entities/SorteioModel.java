@@ -10,9 +10,13 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@Entity(name = "tbsorteio")
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "tbsorteio")
+@NamedStoredProcedureQuery(
+        name = "SP_CarregaHistoricoSorteio_ID",
+        procedureName = "SP_CarregaHistoricoSorteio_ID"
+)
 public class SorteioModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sorteioid")

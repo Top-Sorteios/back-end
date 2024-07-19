@@ -117,7 +117,7 @@ public class UserService {
                     String Turma = (String) getCellStringValue(row, 10);
                     String Nome = (String) getCellStringValue(row, 5);
                     String Status = (String) getCellStringValue(row, 11).toLowerCase();
-                    String Email = (String) getCellStringValue(row, 30);
+                    String Email = (String) getCellStringValue(row, 30).toLowerCase();
                     String CPF = (String) getCpfStringValue(row, 15);
 
 
@@ -190,10 +190,30 @@ public class UserService {
     private String getCellStringValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.STRING ? row.getCell(cellIndex).getStringCellValue() : "";
     }
+
     private String getCpfStringValue(Row row, int cellIndex) {
-        String cpf = getCellStringValue(row, cellIndex);
-        return cpf.replace(".", "").replace("-", "");
+        Cell cell = row.getCell(cellIndex);
+
+        if (cell == null) {
+            throw new EventBadRequestException("Cpf não pode estar vazio");
+        }
+
+        switch (cell.getCellType()) {
+            case NUMERIC:
+                long cpf = (long) cell.getNumericCellValue();
+                return Long.toString(cpf);
+            case STRING:
+                String Cpf = cell.getStringCellValue();
+                String cpfSemMascara = Cpf.replaceAll("[\\.\\-]", "");
+                if (cpfSemMascara.length() > 11){
+                    throw new EventBadRequestException("Cpf com mais de 11 digitos");
+                }
+                return cpfSemMascara;
+            default:
+                throw new EventBadRequestException("Formato do Cpf invalido");
+        }
     }
+
     private double getCellNumericValue(Row row, int cellIndex) {
         return row.getCell(cellIndex).getCellType() == CellType.NUMERIC ? row.getCell(cellIndex).getNumericCellValue() : 0;
     }
@@ -239,14 +259,15 @@ public class UserService {
     private UserModel verificarPrimeiroAcesso(FirstAcessRequestDTO data){
         try{
             UserModel usuario = validateEmail(data.email());
-            String cpfFormatado = formatCpf(data.cpf());
 
-            if(usuario.getEmail().equals(data.email())
-                    && usuario.getCpf().equals(cpfFormatado)
+            String cpfSemMascara = data.cpf().replaceAll("[\\.\\-]", "");
+
+            if(usuario.getEmail().equals(data.email().toLowerCase())
+                    && usuario.getCpf().equals(cpfSemMascara)
                     && usuario.getDataNascimento().equals(data.datanascimento())
                     && (usuario.getSenha() == null || usuario.getSenha().isEmpty())){
 
-                BeanUtils.copyProperties(data, usuario);
+
                 usuario.setSenha(passwordEncoder.encode(data.senha()));
 
                 this.repository.save(usuario);
@@ -260,9 +281,6 @@ public class UserService {
         }
     }
 
-    private String formatCpf(String cpf) {
-        return cpf.replace(".", "").replace("-", "");
-    }
     //    ---------------
     public ResponseEntity<List<UserResponseDTO>> pegarTodosOsUsuarios(){
         try{

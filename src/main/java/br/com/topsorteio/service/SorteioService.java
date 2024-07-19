@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
@@ -79,6 +80,8 @@ public class SorteioService {
                 //Salvar Ganhador
                 sorteioRepository.save(sorteio);
 
+                StoredProcedureQuery reloadProcedure = entityManager.createStoredProcedureQuery("SP_CarregaHistoricoSorteio_ID");
+                reloadProcedure.execute();
 
                 return new ResponseEntity<>(sorteado, HttpStatus.OK);
             }
@@ -122,8 +125,8 @@ public class SorteioService {
 
     public ResponseEntity obterHistoricoSorteio() {
         try {
-            List<HistoricoSorteioModel> historicoSorteio = historicoSorteioRepository.findAll();
 
+            List<HistoricoSorteioModel> historicoSorteio = historicoSorteioRepository.findAll(Sort.by("sorteadoEm").descending());
 
             return new ResponseEntity<>(historicoSorteio, HttpStatus.OK);
         } catch (Exception ex) {
