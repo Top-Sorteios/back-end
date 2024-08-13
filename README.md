@@ -111,7 +111,6 @@ https://modulo-sorteios.azurewebsites.net/usuarios/editar/tipo/{email}
 |-----|----------------------------------------------------------------|-----------|
 | POST | https://modulo-sorteios.azurewebsites.net/premios/registrar    | ADMIN |
 | GET | https://modulo-sorteios.azurewebsites.net/premios/obter        | ADMIN |
-| GET | https://modulo-sorteios.azurewebsites.net/premios/obter-premio | ADMIN | 
 | GET| https://modulo-sorteios.azurewebsites.net/premios/obter/{id}   | ADMIN |
 | PUT| https://modulo-sorteios.azurewebsites.net/premios/editar/{id}  | ADMIN |
 | DELETE | https://modulo-sorteios.azurewebsites.net/premios/{id}         | ADMIN |
@@ -143,7 +142,7 @@ https://modulo-sorteios.azurewebsites.net/premios/registrar
 
 ```
 OBS:
-https://modulo-sorteios.azurewebsites.net/premios/obter-premio
+https://modulo-sorteios.azurewebsites.net/premios/obter
 Só aparece 1 ou mais premios
 
 **SORTEIOS**
