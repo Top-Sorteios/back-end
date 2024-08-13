@@ -41,31 +41,6 @@ public class PremioService {
     private iUserRepository userRepository;
 
     public ResponseEntity<List<PremiosCadastradosResponseDTO>> obterTodosOsPremios() {
-        try {
-            List<PremioModel> premios = premioRepository.findAll();
-            List<PremiosCadastradosResponseDTO> response = new ArrayList<>();
-
-            if(premios.isEmpty()){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-
-            for(PremioModel premio : premios){
-                response.add(new PremiosCadastradosResponseDTO(
-                        premio.getId(),
-                        premio.getNome(),
-                        premio.getCodigoSku(),
-                        premio.getDescricao(),
-                        premio.getImagem(),
-                        premio.getMarca().getNome(),
-                        premio.getQuantidade(),
-                        premio.getCriadoPor().getNome(),
-                        premio.getCriadoEm()));
-            }
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            throw new EventInternalServerErrorException(e.getMessage());
-        }
-    }
-
-   public ResponseEntity<List<PremiosCadastradosResponseDTO>> obterPremios(){
         try{
             List<PremioModel> premios = premioRepository.findAll();
             List<PremiosCadastradosResponseDTO> response = new ArrayList<>();
@@ -90,7 +65,8 @@ public class PremioService {
         } catch (RuntimeException e) {
             throw new EventInternalServerErrorException(e.getMessage());
         }
-   }
+    }
+
 
     public ResponseEntity<PremioResponseDTO> obterPremioPorId(Integer id) {
         try {
