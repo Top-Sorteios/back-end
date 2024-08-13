@@ -65,6 +65,33 @@ public class PremioService {
         }
     }
 
+   public ResponseEntity<List<PremiosCadastradosResponseDTO>> obterPremios(){
+        try{
+            List<PremioModel> premios = premioRepository.findAll();
+            List<PremiosCadastradosResponseDTO> response = new ArrayList<>();
+
+            if(premios.isEmpty()){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+
+            for(PremioModel premio : premios){
+                if(premio.getQuantidade() >= 1) {
+                    response.add(new PremiosCadastradosResponseDTO(
+                            premio.getId(),
+                            premio.getNome(),
+                            premio.getCodigoSku(),
+                            premio.getDescricao(),
+                            premio.getImagem(),
+                            premio.getMarca().getNome(),
+                            premio.getQuantidade(),
+                            premio.getCriadoPor().getNome(),
+                            premio.getCriadoEm()));
+                }
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            throw new EventInternalServerErrorException(e.getMessage());
+        }
+   }
+
     public ResponseEntity<PremioResponseDTO> obterPremioPorId(Integer id) {
         try {
             PremioModel premio = premioRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Prêmio com ID " + id + " não encontrado"));

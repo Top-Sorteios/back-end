@@ -33,7 +33,7 @@ public class PremioModel {
     private byte[] imagem;
 
     @Column (name="quantidade", nullable = false)
-    private int quantidade;
+    private Integer quantidade;
 
     @Column(name ="descricao", nullable = false, length = 500)
     private String descricao;

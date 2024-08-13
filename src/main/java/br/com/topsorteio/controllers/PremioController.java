@@ -25,10 +25,16 @@ public class PremioController {
         return repository.obterTodosOsPremios();
     }
 
+    @GetMapping("/obter-premio")
+    public ResponseEntity obterPremio(){
+        return repository.obterPremios();
+    }
+
     @GetMapping("/obter/{id}")
     public ResponseEntity<?> obterPremioPorId(@PathVariable Integer id) {
         return repository.obterPremioPorId(id);
     }
+
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarPremio(@ModelAttribute PremioRegisterRequestDTO request) throws IOException {
